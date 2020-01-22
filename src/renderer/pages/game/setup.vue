@@ -47,7 +47,7 @@
                             height="425px"
                             v-model="selected"
                             :headers="headers"
-                            :items="isPlayoffs ? topPlayers : players"
+                            :items="isPlayoffs ? topPlayers : players.filter(player => !player.injury)"
                             item-key="id"
                             show-select
                             dense

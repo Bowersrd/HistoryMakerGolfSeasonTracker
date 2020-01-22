@@ -38,13 +38,13 @@
                     <v-stepper-content step="2">
                         <div class="event-container">
                             <h3 class="ml-5 font-weight-bold">Regular Season</h3>
-                            <h4 class="ml-8 my-3" v-show="schedule.length === 0">No events added yet for Regular Season!</h4>
+                            <h4 class="ml-8 my-3" v-show="createdSchedule.length === 0">No events added yet for Regular Season!</h4>
                             <v-card
                             width="98%"
                             color="#E4E4E4"
                             flat
                             class="my-3"
-                            v-for="event in schedule" 
+                            v-for="event in createdSchedule" 
                             :key="event.id"
                             >
                                 <v-row class="d-flex align-center">
@@ -53,6 +53,18 @@
                                         <v-card-subtitle> {{ event.course }} • Purse: ${{ new Intl.NumberFormat('en-US').format(event.purse) }} </v-card-subtitle>
                                     </v-col>
                                     <v-col cols="2">
+                                        <v-icon
+                                        class="mr-4 mt-3"
+                                        @click="moveUp(event)"
+                                        >
+                                        fas fa-sort-up
+                                        </v-icon>
+                                        <v-icon
+                                        class="mr-2 mb-2"
+                                        @click="moveDown(event)"
+                                        >
+                                        fas fa-sort-down
+                                        </v-icon>
                                         <v-icon
                                         small
                                         class="mx-2"
@@ -184,14 +196,14 @@
                             </div>
 
                             <div class="event-container" id="review">
-                                <h3 class="ml-5 font-weight-bold">Regular Season ({{ schedule.length }})</h3>
-                                <h4 class="ml-8 my-3" v-show="schedule.length === 0">No events added yet for Regular Season!</h4>
+                                <h3 class="ml-5 font-weight-bold">Regular Season ({{ createdSchedule.length }})</h3>
+                                <h4 class="ml-8 my-3" v-show="createdSchedule.length === 0">No events added yet for Regular Season!</h4>
                                 <v-card
                                 height="90px" 
                                 color="#E4E4E4"
                                 flat
                                 class="my-3"
-                                v-for="event in schedule" 
+                                v-for="event in createdSchedule" 
                                 :key="event.id"
                                 >
                                     <v-card-title> {{ event.name }} </v-card-title>
@@ -255,7 +267,6 @@
         { text: 'Grade', value: 'grade' }
         ],
         players: [],
-        schedule: [],
         dialog: false,
         editedPlayoff: false,
         editedItem: {
@@ -280,12 +291,8 @@
       this.initialize()
     },
     methods: {
-        test (playoff) {
-            console.log(playoff)
-        },
         initialize () {
             this.players = this.$store.state.golfers.players
-            this.schedule = this.$store.state.season.schedule
         },
         addToRoster () {
             this.$store.dispatch('season/addPlayers', this.selected)
@@ -330,11 +337,19 @@
         seasonActive () {
             this.$store.dispatch('season/activateSeason')
             this.$store.dispatch('game/resetGame')
+        },
+        moveUp (event) {
+            let index = this.createdSchedule.indexOf(event)
+            this.$store.dispatch('season/moveEventUp', index)
+        },
+        moveDown (event) {
+            let index = this.createdSchedule.indexOf(event)
+            this.$store.dispatch('season/moveEventDown', index)
         }
     },
     computed: {
         eventCount () {
-            return this.schedule.length + this.playoffs.length
+            return this.createdSchedule.length + this.playoffs.length
         },
         courses () {
             return this.$store.state.courses.courses
@@ -344,6 +359,9 @@
         },
         rosters () {
             return this.$store.state.season.players
+        },
+        createdSchedule () {
+            return this.$store.state.season.schedule
         }
     }
   }

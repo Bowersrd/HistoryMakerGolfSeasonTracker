@@ -9,9 +9,12 @@ const getDefaultState = () => {
       currentHole: 1,
       group: 0,
       gameEnded: false,
+      emerge: 0,
       counter: 1,
       holeSync: [1,2,1,3,2,1,4,3,2,1,5,4,3,2,1,6,5,4,3,2,1,7,6,5,4,3,2,8,7,6,5,4,3,9,8,7,6,5,4,10,9,8,7,6,5,11,10,9,8,7,6,12,11,10,9,8,7,13,12,11,10,9,8,14,13,12,11,10,9,15,14,13,12,11,10,16,15,14,13,12,11,17,16,15,14,13,12,18,17,16,15,14,13,18,17,16,15,14,18,17,16,15,18,17,16,18,17,18],
+      holeSyncEmerge: [1,2,1,3,2,1,4,3,2,1,5,4,3,2,1,6,5,4,3,2,1,7,6,5,4,3,2,8,7,6,5,4,3,9,8,7,6,5,4,10,9,8,7,6,5,11,10,9,8,7,6,12,11,10,9,8,7,13,12,11,10,9,8,14,13,12,11,10,9,16,15,14,13,12,11,10,17,16,15,14,13,12,11,18,17,16,15,14,13,12,18,17,16,15,14,13,18,17,16,15,14,18,17,16,15,18,17,16,18,17,18],
       groupSync:[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,1,2,3,4,5,2,3,4,5,3,4,5,4,5,5],
+      groupSyncEmerge:[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,1,2,3,4,5,6,2,3,4,5,6,3,4,5,6,4,5,6,5,6,6],
       convertedScores: [
         {scores: [266,267,268,269,270,271,271,272,273]},
         {scores: [269,270,271,272,273,274,274,275,276]},
@@ -211,21 +214,18 @@ const getDefaultState = () => {
           player.score = player.score + finalScore
         }
       })
-
       } else {
-        state.group = state.groupSync[state.counter]
-        state.currentHole = state.holeSync[state.counter]
-        state.counter++
+          state.emerge > 0 ? state.group = (state.groupSyncEmerge[state.counter], state.currentHole = state.holeSyncEmerge[state.counter]) : (state.group = state.groupSync[state.counter], state.currentHole = state.holeSync[state.counter])
+          state.counter++
       }
     },
     PREV_HOLE: (state) => {
       if (state.counter === 1) {
         // Do Nothing
       } else {
-        state.group = state.groupSync[state.counter - 2]
-        state.currentHole = state.holeSync[state.counter - 2]
-        state.counter--
-      }
+        state.emerge > 0 ? state.group = (state.group = state.groupSyncEmerge[state.counter - 2], state.currentHole = state.holeSyncEmerge[state.counter - 2]) : (state.group = state.groupSync[state.counter - 2], state.currentHole = state.holeSync[state.counter - 2])             
+        }
+      state.counter--
     },
     SORT_FIELD: (state) => {
       state.field.sort((a,b) => a.score - b.score)
@@ -290,6 +290,24 @@ const getDefaultState = () => {
             player.total = player.score - (72 * 4)
         }
       })
+    },
+    SET_EMERGING_CONTENDERS: (state, { contenders, parTotal }) => {
+
+      const lowScoreA = state.pairings.map(pair => pair.a.total)
+      const lowScoreB = state.pairings.map(pair => pair.b.total)
+      const lowScores = lowScoreA.concat(lowScoreB)
+      const lowestScore = Math.min(...lowScores)
+
+      contenders.a.score = 288 - parTotal + lowestScore + 1
+      contenders.a.total = lowestScore + 1
+
+      contenders.b.score = 288 - parTotal + lowestScore + 1
+      contenders.b.total = lowestScore + 1
+
+      state.pairings.unshift(contenders)
+
+      state.emerge = 1
+
     }
   }
   
@@ -342,4 +360,7 @@ const getDefaultState = () => {
     setTotalStrokes ({ commit }) {
       commit('SET_TOTAL_STROKES')
     },
+    setEmergingContenders ({ commit }, { contenders, parTotal }) {
+      commit('SET_EMERGING_CONTENDERS', { contenders, parTotal })
+    }
   }

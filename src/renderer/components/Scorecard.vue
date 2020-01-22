@@ -1,7 +1,7 @@
 <template>
     <div id="score-wrapper">
         <!-- <div class="d-flex perks">
-            <p class="body-2 success font-weight-bold">Lucky</p>
+            <p class="body-2 green font-weight-bold">Lucky</p>
             <p class="body-2 yellow font-weight-bold">Sunny</p>
         </div> -->
         <div id="scorecard-wrapper">
@@ -49,9 +49,15 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="d-flex">
             <div class="d-flex flex-wrap scorecard-actions">
-                <div class="d-flex flex-wrap score-actions mt-3">
-                    <v-btn v-for="action in actions" :key="action" tile width="100px" color="#083666" dark class="caption" v-on:click="sendScore(action)"> {{ action }} </v-btn>
+                <div class="d-flex flex-wrap score-actions mt-1">
+                    <v-row>
+                        <v-col cols="7">
+                            <v-btn v-for="action in actions" :key="action" tile width="100px" color="#083666" dark class="caption mb-2" @click="sendScore(action)"> {{ action }} </v-btn>
+                        </v-col>
+                    </v-row>
                 </div>
             </div>
         </div>
@@ -212,7 +218,7 @@ $gradient-black: linear-gradient(#0D0D0D, #1D1D1D);
     height: 100px;
 }
 .score-actions {
-    width: 60%;
+    width: 100%;
     height: 100%;
     button {
         margin: 0 5px;

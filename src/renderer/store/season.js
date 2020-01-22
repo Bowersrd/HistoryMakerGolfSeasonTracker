@@ -54,7 +54,8 @@ const getDefaultState = () => {
       const newArray = state.players.map(player => player)
       const sortedPlayers = newArray.sort((a,b) => b.points - a.points) 
       return sortedPlayers.slice(0,state.playoffSchedule[state.currentWeek].field)
-    }
+    },
+    injuredPlayers: state => state.players.filter(player => player.injury)
   }
   
   export const mutations = {
@@ -198,7 +199,36 @@ const getDefaultState = () => {
     },
     SET_VIDEO_STATUS: (state) => {
       state.watchedVideo = true
-    }
+    },
+    ADD_INJURY: (state, golfer) => {
+      state.players.forEach(player => {
+        if (player.id === golfer.id) {
+          player.injury = true
+          player.injuryType = golfer.injury
+        }
+      })
+    },
+    REMOVE_INJURY: (state, id) => {
+      state.players.forEach(player => {
+        if (player.id === id) {
+          player.injury = false
+        }
+      })
+    },
+    MOVE_EVENT_UP: (state, index) => {
+      const arrayMove = require('array-move');
+      let newSchedule = arrayMove(state.schedule, index, index - 1)
+
+      if (index - 1 >= 0) {
+        state.schedule = newSchedule
+      }    
+    },
+    MOVE_EVENT_DOWN: (state, index) => {
+      const arrayMove = require('array-move');
+      let newSchedule = arrayMove(state.schedule, index, index + 1)
+
+      state.schedule = newSchedule
+    },
   }
   
   export const actions = {
@@ -243,5 +273,17 @@ const getDefaultState = () => {
     },
     setVideoStatus ({ commit }) {
       commit('SET_VIDEO_STATUS')
+    },
+    addInjury ({ commit }, golfer) {
+      commit('ADD_INJURY', golfer)
+    },
+    removeInjury ({ commit }, id) {
+      commit('REMOVE_INJURY', id)
+    },
+    moveEventUp ({ commit }, index) {
+      commit('MOVE_EVENT_UP', index)
+    },
+    moveEventDown ({ commit }, index) {
+      commit('MOVE_EVENT_DOWN', index)
     }
   }

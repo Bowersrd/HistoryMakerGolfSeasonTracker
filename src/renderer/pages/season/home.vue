@@ -141,7 +141,8 @@
                 hide-default-footer
             >
                 <template v-slot:item.last="{ item }">
-                    {{ item.first }} {{ item.last }}   
+                    {{ item.first }} {{ item.last }} 
+                    <img class="ml-1" height="30%" src="@/assets/img/injury.svg" alt="Injury Symbol" v-if="item.injury" />  
                 </template>
                 <template v-slot:item.points="{ item }">
                     {{ item.points.toLocaleString('en') }}  

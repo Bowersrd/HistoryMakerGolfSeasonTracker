@@ -246,7 +246,7 @@
           }
         })
         this.snackbar = true
-        this.snackText = 'Course successfully exported!'
+        this.snackText = `${item.name} successfully exported!`
         }
       },
 
@@ -260,7 +260,7 @@
           if (course.courseId !== undefined) {
             this.$store.dispatch('courses/addCourse', course)
             this.snackbar = true
-            this.snackText = 'Course successfully imported!'
+            this.snackText = `${course.name} successfully imported!`
           }
         }
       },

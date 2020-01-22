@@ -22,6 +22,8 @@
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
               <v-btn color="#CC0001" dark class="mb-2 ml-2" v-on="on">Add Golfer</v-btn>
+              <v-btn color="#083666" dark class="mb-2 ml-2" @click="importRoster">Import Roster</v-btn>
+              <v-btn color="#CC0001" dark class="mb-2 ml-2" @click="exportRoster">Export Roster</v-btn>
               <v-btn color="#083666" dark class="mb-2" @click.native="resetGolfers">Reset Golfers</v-btn>
             </template>
             <v-card>
@@ -67,6 +69,7 @@
               </v-card-text>
 
               <v-card-actions>
+                <v-btn color="blue darken-1" text @click="importGolfer">Import</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                 <v-btn color="blue darken-1" text @click="save">Save</v-btn>
@@ -91,9 +94,16 @@
         </v-icon>
         <v-icon
           small
+          class="mr-2"
           @click="deleteItem(item)"
         >
           fas fa-trash-alt
+        </v-icon>
+        <v-icon
+          small
+          @click="exportGolfer(item)"
+        >
+          fas fa-file-export
         </v-icon>
       </template>
       <template v-slot:no-data>
@@ -105,6 +115,20 @@
         <v-icon>fas fa-long-arrow-alt-left</v-icon>
       </v-btn>
     </div>
+    <v-snackbar
+      color="#083666"
+      v-model="snackbar"
+      :timeout="3000"
+    >
+      {{ snackText }}
+      <v-btn
+        dark
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     </div>
   </template>
 
@@ -112,6 +136,8 @@
   export default {
     data: () => ({
       dialog: false,
+      snackbar: false,
+      snackText: '',
       headers: [
         { text: 'First', value: 'first' },
         { text: 'Last', value: 'last' },
@@ -127,6 +153,7 @@
       players: [],
       editedIndex: -1,
       editedItem: {
+        id: 0,
         first: '',
         last: '',
         country: '',
@@ -140,6 +167,7 @@
         grade: ''
       },
       defaultItem: {
+        id: 0,
         first: '',
         last: '',
         country: '',
@@ -207,7 +235,75 @@
 
       resetGolfers () {
         this.$store.dispatch('golfers/resetGolfers')
+      },
+
+      importRoster () {
+        const {dialog} = require('electron').remote;
+        const fs = require('fs');
+        let file = dialog.showOpenDialog({
+        properties: ['openFile']});
+        if (file !== undefined) {
+          const roster = JSON.parse(fs.readFileSync(file[0], 'utf8'));
+          if (roster !== undefined) {
+            this.$store.dispatch('golfers/addRoster', roster)
+            this.snackbar = true
+            this.snackText = 'Roster successfully imported!'
+          }
+        }
+      },
+
+      importGolfer () {
+        const {dialog} = require('electron').remote;
+        const fs = require('fs');
+        let file = dialog.showOpenDialog({
+        properties: ['openFile']});
+        if (file !== undefined) {
+          const golfer = JSON.parse(fs.readFileSync(file[0], 'utf8'));
+          if (golfer.id !== undefined) {
+            this.$store.dispatch('golfers/addGolfer', golfer)
+            this.dialog = false
+            this.snackbar = true
+            this.snackText = `${golfer.first} ${golfer.last} successfully imported!`
+          }
+        }
+      },
+
+      exportGolfer (item) {
+        const {dialog} = require('electron').remote;
+        const exportedGolfer = JSON.stringify(item)
+        let path = dialog.showOpenDialog({
+        properties: ['openDirectory']});
+        let name = `${item.first} ${item.last}`
+        var fs = require('fs');
+        if (path !== undefined) {
+        fs.writeFile(`${path}/${name}.txt`, exportedGolfer, function(err) {
+          if (err) {
+            console.log(err);
+          }
+        })
+        this.snackbar = true
+        this.snackText = `${item.first} ${item.last} successfully exported!`
+        }
+      },
+
+      exportRoster () {
+        const {dialog} = require('electron').remote;
+        const exportedRoster = JSON.stringify(this.$store.state.golfers.players)
+        let path = dialog.showOpenDialog({
+        properties: ['openDirectory']});
+        let name = `{YEAR}_PGA_TOUR`
+        var fs = require('fs');
+        if (path !== undefined) {
+        fs.writeFile(`${path}/${name}.json`, exportedRoster, function(err) {
+          if (err) {
+            console.log(err);
+          }
+        })
+        this.snackbar = true
+        this.snackText = `Roster successfully exported!`
+        }
       }
+
     }
   }
 </script>

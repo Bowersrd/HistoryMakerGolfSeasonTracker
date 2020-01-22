@@ -37,7 +37,10 @@
                                 <span v-if="item.lastRank">&nbsp; {{ Math.abs(item.lastRank - item.rank) }}</span>
                             </td>
                             <td><img class="mt-2" height="100%" :src="require(`@/assets/img/flags/${item.country}.png`)" alt="Country Flag" /></td>
-                            <td>{{ item.first }} {{ item.last }}</td>
+                            <td>
+                                {{ item.first }} {{ item.last }}
+                                <img class="ml-1" height="25%" src="@/assets/img/injury.svg" alt="Injury Symbol" v-if="item.injury" />
+                            </td>
                             <td>{{ item.events.length }}</td>
                             <td>{{ item.points.toLocaleString('en') }}</td>
                             <td>{{ item.wins }}</td>

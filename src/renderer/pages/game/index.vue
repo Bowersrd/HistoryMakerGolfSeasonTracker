@@ -57,7 +57,7 @@
             </v-data-table>
         </div>
         <div id="play-area">
-            <div class="golfer ml-10">
+            <div class="golfer ml-10 mt-12">
                 <Scorecard
                 :golfer="`${pairs[group].a.first} ${pairs[group].a.last}`"
                 :country="pairs[group].a.country"
@@ -68,7 +68,7 @@
                 :key="componentKeyA"
                 ></Scorecard>
             </div>
-            <div class="golfer mb-12 ml-10">
+            <div class="golfer ml-10 mt-10">
                 <Scorecard
                 :golfer="`${pairs[group].b.first} ${pairs[group].b.last}`"
                 :country="pairs[group].b.country"
@@ -120,6 +120,80 @@
         :button="'View Results'"
         :route="'/game/results'"
         ></Modal>
+        <v-dialog
+        max-width="500px"
+        v-model="emergeDialog"
+        >
+            <v-card>
+                <v-container>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-card-title>Emerging Contenders</v-card-title>
+                            <v-card-subtitle>Are there any contenders emerging this tournament?</v-card-subtitle>
+                            <v-card-text>
+                                If yes, next dialog will allow you to input the emerging contender(s). If not, continue the game as normal.
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn text @click="emerge(0)">None</v-btn>
+                                <v-btn text @click="emerge(1)">One</v-btn>
+                                <v-btn text @click="emerge(2)">Two</v-btn>
+                            </v-card-actions>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-card>
+        </v-dialog>
+        <v-dialog
+        max-width="500px"
+        v-model="isEmerge"
+        >
+            <v-card>
+                <v-container>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-card-title>Who is Emerging?</v-card-title>
+                            <v-card-subtitle>Input the golfer(s) that is/are emerging!</v-card-subtitle>
+                            <v-card-text>
+                                <v-autocomplete
+                                :items="field.filter(player => player.score > 250 && player.score !== 500)"
+                                item-text="last"
+                                v-model="contenders.a"
+                                return-object
+                                >
+                                    <template slot="selection" slot-scope="data">
+                                        {{ data.item.first }} {{ data.item.last }}
+                                    </template>
+                                    <template slot="item" slot-scope="data">
+                                            {{ data.item.first }} {{ data.item.last }}
+                                        </template>
+                                </v-autocomplete>
+                                <v-autocomplete
+                                :items="field"
+                                item-text="last"
+                                v-if="emerged === 2"
+                                v-model="contenders.b"
+                                return-object
+                                >
+                                    <template slot="selection" slot-scope="data">
+                                        {{ data.item.first }} {{ data.item.last }}
+                                    </template>
+                                    <template slot="item" slot-scope="data">
+                                            {{ data.item.first }} {{ data.item.last }}
+                                        </template>
+                                </v-autocomplete>
+                                {{ contenders }}
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn text @click="emergeCancel">Back</v-btn>
+                                <v-btn text @click="emergeConfirm">Continue</v-btn>
+                            </v-card-actions>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
@@ -137,7 +211,6 @@ export default {
     data: () => {
         return {
             headers: [
-                { text: '', value: 'rank' },
                 { text: 'FINAL ROUND', value: 'last' },
                 { text: '', value: 'country', width: 170 },
                 { text: 'TOTAL', value: 'total', align: 'center' },
@@ -145,7 +218,11 @@ export default {
                 { text: 'TODAY', value: 'today', align: 'center' },
             ],
             componentKeyA: 0,
-            componentKeyB: 0
+            componentKeyB: 0,
+            emergeDialog: false,
+            isEmerge: false,
+            emerged: 0,
+            contenders: {a: [{score: null}], b: [{score: null}]}
         }
     },
     computed: {
@@ -230,12 +307,32 @@ export default {
         },
         prevHole () {
             this.$store.dispatch('game/prevHole')
+        },
+        emerge (val) {
+            if (val === 0) {
+                this.emergeDialog = false 
+            } else {
+                val === 1 ? this.emerged = 1 : this.emerged = 2
+                this.emergeDialog = false
+                this.isEmerge = true
+            }
+        },
+        emergeCancel () {
+            this.isEmerge = false
+            this.emerged = 0
+            this.emergeDialog = true
+        },
+        emergeConfirm () {
+            let parTotal = this.course.holes[15].par + this.course.holes[16].par + this.course.holes[17].par
+
+            this.$store.dispatch('game/setEmergingContenders', { contenders: this.contenders, parTotal })
         }
     },
     created () {
         let par = (this.course.par * 3)
         let pairs = this.mappedPairs
         this.$store.dispatch('game/setupLeaderboard', { par, pairs })
+        this.isEmerge = false
     }
 }
 </script>
@@ -273,9 +370,6 @@ export default {
     margin-bottom: 70px;
     width: 50%;
     height: 100%;
-    .golfer:first-child {
-        margin-bottom: 125px;
-    }
 }
 
 #hole {

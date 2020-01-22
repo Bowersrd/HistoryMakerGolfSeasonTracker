@@ -22,11 +22,23 @@
                         <v-card-title>WINNER</v-card-title>
                         <v-card-subtitle class="text-uppercase"> {{ event.winner || 'TBD' }} </v-card-subtitle>
                     </v-col>
-                    <v-col cols="3">
-                        <v-card-title>FEDEX CUP POINTS</v-card-title>
+                    <v-col cols="2">
+                        <v-card-title>POINTS</v-card-title>
                         <v-card-subtitle> {{ event.points }} </v-card-subtitle>
                     </v-col>
-                    <v-col class="d-flex" cols="1" v-if="!event.winner">
+                    <v-col class="d-flex" cols="2" v-if="!event.winner">
+                        <v-icon
+                        class="mr-4 mt-3"
+                        @click="moveUp(event)"
+                        >
+                        fas fa-sort-up
+                        </v-icon>
+                        <v-icon
+                        class="mr-4 mb-2"
+                        @click="moveDown(event)"
+                        >
+                        fas fa-sort-down
+                        </v-icon>
                         <v-icon
                         small
                         class="mr-4"
@@ -63,14 +75,14 @@
                         <v-card-title>WINNER</v-card-title>
                         <v-card-subtitle class="text-uppercase"> {{ event.winner || 'TBD' }} </v-card-subtitle>
                     </v-col>
-                    <v-col cols="3">
-                        <v-card-title>FEDEX CUP POINTS</v-card-title>
+                    <v-col cols="2">
+                        <v-card-title>POINTS</v-card-title>
                         <v-card-subtitle> {{ event.points }} </v-card-subtitle>
                     </v-col>
-                    <v-col class="d-flex" cols="1" v-if="!event.winner">
+                    <v-col class="d-flex" cols="2" v-if="!event.winner">
                         <v-icon
                         small
-                        class="mr-4"
+                        class="ml-12"
                         @click="editItemPlayoff(event)"
                         >
                         fas fa-edit
@@ -204,6 +216,14 @@ export default {
             }
             this.close()
         },
+        moveUp (event) {
+            let index = this.schedule.indexOf(event)
+            this.$store.dispatch('season/moveEventUp', index)
+        },
+        moveDown (event) {
+            let index = this.schedule.indexOf(event)
+            this.$store.dispatch('season/moveEventDown', index)
+        }
     }    
 }
 </script>
