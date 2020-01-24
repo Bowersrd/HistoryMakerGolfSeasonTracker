@@ -16,7 +16,7 @@
             vertical
           ></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog v-model="dialog" max-width="900px">
             <template v-slot:activator="{ on }">
               <v-btn color="#CC0001" dark class="mb-2 ml-2" v-on="on">Add Course</v-btn>
               <v-btn color="#083666" dark class="mb-2 ml-2" @click="importCourse">Import Course</v-btn>
@@ -48,7 +48,7 @@
                     <v-col cols="12">
                       <h1>Holes</h1>
                     </v-col>
-                    <v-col class="outlined" cols="4" v-for="(addHole, index) in addHoles" :key="addHole.index">
+                    <v-col class="outlined" cols="2" v-for="(addHole, index) in addHoles" :key="addHole.index">
                       <h1 class="ml-11 mb-2"> {{ addHole }}</h1>
                       <div class="hole-box">
                         <v-text-field

@@ -62,14 +62,40 @@ const getDefaultState = () => {
     RESET_SEASON: state => {
       Object.assign(state, getDefaultState())
     },
+    LOOK_AHEAD: state => {
+      if (state.currentWeek + 1 === state.schedule.length) {
+        state.currentWeek = 0
+      } else {
+        state.currentWeek++
+      }
+    },
+    IMPORT_SEASON: (state, season) => {
+      state.activeSeason = season.activeSeason
+      state.currentWeek = season.currentWeek
+      state.players = [...season.players]
+      state.schedule = [...season.schedule]
+      state.playoffSchedule = [...season.playoffSchedule]
+      state.isPlayoffs = season.isPlayoffs
+      state.watchedVideo = season.watchedVideo
+      state.isEndOfSeason = season.isEndOfSeason
+    },
     ACTIVATE_SEASON: state => state.activeSeason = true,
     ADD_PLAYERS: (state, players) => {
         state.players = players
     },
     ADD_EVENT: (state, details) => {
       let count = state.schedule.length
-      let event = {...details, id: count}
+      let event = {...details, id: count, picture: false}
       state.schedule.push(event)
+    },
+    ADD_EVENT_PIC: (state, { id, picture }) => {
+      state.schedule.forEach(event => {
+        if (event.id === id) {
+          event.picture = picture
+        }
+      })
+
+      console.log(state.schedule)
     },
     EDIT_EVENT: (state, { event, index, playoff }) => {
       playoff ? Object.assign(state.playoffSchedule[index], event) : Object.assign(state.schedule[index], event)
@@ -195,7 +221,7 @@ const getDefaultState = () => {
     },
     SET_LAST_RANK: (state) => {
       state.players.forEach(player => player.lastRank = player.rank)
-      console.log(state.players)
+      state.players.forEach(player => player.score = null)
     },
     SET_VIDEO_STATUS: (state) => {
       state.watchedVideo = true
@@ -235,6 +261,12 @@ const getDefaultState = () => {
     resetSeason ({ commit }) {
       commit('RESET_SEASON')
     },
+    lookAhead ({ commit }) {
+      commit('LOOK_AHEAD')
+    },
+    importSeason ({ commit }, season) {
+      commit('IMPORT_SEASON', season)
+    },
     activateSeason ({ commit }) {
       commit('ACTIVATE_SEASON')
     },
@@ -243,6 +275,9 @@ const getDefaultState = () => {
     },
     addEvent ({ commit }, details) {
       commit('ADD_EVENT', details)
+    },
+    addEventPic ({ commit }, { id, picture }) {
+      commit('ADD_EVENT_PIC', { id, picture })
     },
     editEvent ({ commit }, { event, index, playoff }) {
       commit('EDIT_EVENT', { event, index, playoff })

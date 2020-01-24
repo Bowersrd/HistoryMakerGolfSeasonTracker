@@ -1,8 +1,10 @@
 import Golfers from '../static/golfers.json'
+import Countries from '../static/countries.json'
 
 const getDefaultState = () => {
   return {
-    players: Golfers   
+    players: Golfers,
+    countries: Countries    
   }
 }
 

@@ -34,14 +34,20 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
+                    <v-col cols="6">
                       <v-text-field v-model="editedItem.first" label="First"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
+                    <v-col cols="6">
                       <v-text-field v-model="editedItem.last" label="Last"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.country" label="Country"></v-text-field>
+                    <v-col cols="12">
+                      <v-autocomplete
+                      :items="$store.state.golfers.countries"
+                      item-text="country"
+                      item-value="code"
+                      label="Country"
+                      v-model="editedItem.country"
+                      ></v-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field v-model="editedItem.points" label="FedEx Points"></v-text-field>
@@ -303,7 +309,6 @@
         this.snackText = `Roster successfully exported!`
         }
       }
-
     }
   }
 </script>

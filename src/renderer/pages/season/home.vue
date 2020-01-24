@@ -15,14 +15,14 @@
                 >
                     <v-img
                     class="white--text align-end"
-                    height="245px"
-                    :src="isPlayoffs ? require('../../assets/img/northern_trust.jpg') : require('../../assets/img/pebble_beach.jpg')"
+                    height="250px"
+                    :src="isPlayoffs ? require('../../assets/img/northern_trust.jpg') : ( schedule[currentWeek].picture ? schedule[currentWeek].picture : require('@/assets/img/generic_course.jpg') )"
                     v-if="isPlayoffs && currentWeek === 0 || !isPlayoffs"
                     >
                     </v-img>
                     <v-img
                     class="white--text align-end"
-                    height="245px"
+                    height="250px"
                     :src="currentWeek === 1 ? require('../../assets/img/bmw_championship.jpg') : require('../../assets/img/tour_championship.jpg')"
                     v-else
                     >
@@ -104,23 +104,21 @@
                 width="32%"
                 class="season-menu-option"
                 color="#CC0001"
+                @click="exportSeason"
                 >
                     <div class="icon-box">
                         <v-icon size="100px">
-                        fas fa-golf-ball
+                        fas fa-file-export
                         </v-icon>
                     </div>
                     <v-card-title>
-                        Till Further Notice
+                        Export Current Season
                     </v-card-title>
                     <v-card-subtitle>
-                        Check TFN around the tour
+                        Exports season file
                     </v-card-subtitle>
                 </v-card>
             </div> 
-            <v-btn class="mt-10 mb-4 back-btn" dark large fab color="#CC0001" to="/season">
-                <v-icon>fas fa-long-arrow-alt-left</v-icon>
-            </v-btn>
         </div>
         <div id="fedex-leaderboard">
             <div class="leaderboard-header d-flex">
@@ -169,6 +167,12 @@
                 </MarqueeText>
             </v-card-subtitle>
         </v-card>
+        <v-btn class="mt-10 mb-4 back-btn" dark large fab color="#CC0001" to="/season">
+            <v-icon>fas fa-long-arrow-alt-left</v-icon>
+        </v-btn>
+        <v-btn class="mt-10 mb-4 forward-btn" dark large fab color="#CC0001" @click="lookAhead">
+            <v-icon>fas fa-long-arrow-alt-right</v-icon>
+        </v-btn>
     </div>
 </template>
 
@@ -221,8 +225,32 @@ import VideoPlayer from '../../components/VideoPlayer'
         }
     },
     methods: {
+        lookAhead () {
+            this.$store.dispatch('season/lookAhead')
+        },
         setLastRank () {
             this.$store.dispatch('season/setLastRank')
+        },
+        exportSeason () {
+        if (this.activeGame) {
+            alert('Cannot Export While Tournament in Progress!')
+        } else {
+            const {dialog} = require('electron').remote;
+            const season = JSON.stringify(this.$store.state.season)
+            let path = dialog.showOpenDialog({
+            properties: ['openDirectory']});
+            let name = `PGA_TOUR_SEASON_FILE`
+            var fs = require('fs');
+            if (path !== undefined) {
+            fs.writeFile(`${path}/${name}.json`, season, function(err) {
+            if (err) {
+                console.log(err);
+            }
+            })
+            this.snackbar = true
+            this.snackText = `Season successfully exported!`
+            }
+          }
         }
     },
     created () {
@@ -267,7 +295,7 @@ import VideoPlayer from '../../components/VideoPlayer'
 }
 
 .leaderboard-header {
-    width: 88%;
+    width: 89%;
     height: 60px;
     background: $blue;
     h1 {

@@ -33,8 +33,8 @@
                         </v-row>
                         <v-btn
                             color="#083666"
-                            dark
-                            class="ml-3"
+                            class="ml-3 white--text"
+                            :disabled="tournamentScoring === ''"
                             @click="e1 = 2"
                             >
                             Continue
@@ -61,7 +61,8 @@
                         <h3 class="body-1 mb-4" :class="{ maxed : overMax} " v-else> {{ selected.length }} / {{ playoffSchedule[currentWeek].field }} - Field Size </h3>
                         <v-btn
                         color="#083666"
-                        dark
+                        class="white--text"
+                        :disabled="isPlayoffs ? selected.length < 12 || selected.length > playoffSchedule[currentWeek].field : selected.length < 12 || selected.length > schedule[currentWeek].field"
                         @click="e1 = 3; getField()"
                         >
                         Continue
@@ -124,13 +125,13 @@
                                     ></v-text-field> 
                                 </div>  
                             </v-col> 
-                            <h3 class="ml-3 mb-4 mt-n5 caption font-weight-bold">*Pairing One will tee off first</h3>
+                            <h3 class="ml-3 mb-4 mt-n5 caption font-weight-bold error--text">*Pairing One will tee off first</h3>
                         </v-row>
                         <v-row>
                             <v-btn
                             color="#083666"
-                            dark
-                            class="ml-3"
+                            class="ml-3 white--text"
+                            :disabled="pairScores[0].a.filter(score => score !== null && score !== '').length < 6 || pairScores[0].b.filter(score => score !== null && score !== '').length < 6"
                             @click="e1 = 4; getPairings()"
                             >
                             Continue
@@ -203,10 +204,12 @@
                                 fas fa-edit
                                 </v-icon>
                             </template>
-                        </v-data-table>    
+                        </v-data-table>  
+                        {{ field.filter(player => player.score !== null).length }} 
                         <v-btn
                         color="#083666"
-                        dark
+                        class="white--text"
+                        :disabled="allScoresEntered"
                         @click.native="startGame"
                         to="/game"
                         >
@@ -301,6 +304,15 @@ export default {
         },
         isPlayoffs () {
             return this.$store.state.season.isPlayoffs
+        },
+        tournamentScoring () {
+            return this.$store.state.game.tournamentScore
+        },
+        field () {
+            return this.$store.state.game.field
+        },
+        allScoresEntered () {
+            return this.field.filter(player => player.score !== null).length < this.field.length
         }
     },
     watch: {
@@ -320,6 +332,7 @@ export default {
             let pairs = this.pairings
             let scores = this.pairScores
             this.$store.dispatch('game/getPairings', { pairs, scores })
+            console.log(this.field)
         },
         clearPairings () {
             this.pairings = this.clearedPairings

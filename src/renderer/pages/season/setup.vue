@@ -48,9 +48,25 @@
                             :key="event.id"
                             >
                                 <v-row class="d-flex align-center">
-                                    <v-col cols="10">
+                                    <v-col cols="8">
                                         <v-card-title> {{ event.name }} </v-card-title>
                                         <v-card-subtitle> {{ event.course }} • Purse: ${{ new Intl.NumberFormat('en-US').format(event.purse) }} </v-card-subtitle>
+                                    </v-col>
+                                    <v-col cols="2">
+                                        <v-icon
+                                        @click="selectImage(event.id)"
+                                        v-show="!event.picture"
+                                        >
+                                            fas fa-image
+                                        </v-icon>
+                                        <img 
+                                        v-show="event.picture" 
+                                        height="75px" 
+                                        class="mt-1 elevation-1"
+                                        :src="event.picture" 
+                                        alt="Event Picture" 
+                                        @click="selectImage(event.id)"
+                                        />
                                     </v-col>
                                     <v-col cols="2">
                                         <v-icon
@@ -296,6 +312,16 @@
         },
         addToRoster () {
             this.$store.dispatch('season/addPlayers', this.selected)
+        },
+        selectImage (id) {
+                const {dialog} = require('electron').remote;
+                const fs = require('fs');
+                let file = dialog.showOpenDialog({
+                properties: ['openFile']});
+                if (file !== undefined) {
+                    let picture = file[0]
+                    this.$store.dispatch('season/addEventPic', { id, picture })
+                }
         },
         editItem (item) {
             this.editedIndex = this.$store.state.season.schedule.indexOf(item)

@@ -14,6 +14,12 @@
             <p>Continue Season</p>
           </div>
         </nuxt-link>
+        <nuxt-link to="/season/home" class="menu-item" @click.native="importSeason">
+          <v-icon dark size="100px">fas fa-file-import</v-icon>
+          <div class="menu-item-sub">
+            <p>Import Season</p>
+          </div>
+        </nuxt-link>
       </div>
       <v-btn class="mt-10 back-btn" dark large fab color="#083666" to="/">
         <v-icon>fas fa-long-arrow-alt-left</v-icon>
@@ -27,6 +33,19 @@
     methods: {
       newSeason () {
         this.$store.dispatch('season/resetSeason')
+      },
+      importSeason () {
+        const {dialog} = require('electron').remote;
+        const fs = require('fs');
+        let file = dialog.showOpenDialog({
+        properties: ['openFile']});
+        if (file !== undefined) {
+          const season = JSON.parse(fs.readFileSync(file[0], 'utf8'));
+          if (season !== undefined) {
+            console.log(season)
+            this.$store.dispatch('season/importSeason', season)
+          }
+        }
       }
     },
     computed: {
