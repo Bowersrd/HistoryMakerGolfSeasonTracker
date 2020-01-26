@@ -43,14 +43,36 @@
                 </v-stepper-items>
                 <v-stepper-items>
                     <v-stepper-content step="2">
+                        <v-row class="mt-n11">
+                            <v-col cols="7">
+                                <div class="d-flex align-center">
+                                    <v-toolbar-title class="title text-uppercase mt-5">Tournament Field</v-toolbar-title>
+                                <v-divider
+                                    class="mx-4"
+                                    inset
+                                    vertical
+                                ></v-divider>
+                                    <h2 class="mr-5 font-weight-bold text-uppercase mt-5">Search Golfer:</h2>
+                                    <v-text-field 
+                                    class="mt-5"
+                                    v-model="searchField"
+                                    clearable
+                                    ></v-text-field>
+                                </div>
+                            </v-col>
+                        </v-row>
                         <v-data-table
-                            height="425px"
+                            height="400px"
                             v-model="selected"
                             :headers="headers"
                             :items="isPlayoffs ? topPlayers : players.filter(player => !player.injury)"
                             item-key="id"
                             show-select
                             dense
+                            fixed-header
+                            hide-default-footer
+                            :search="searchField"
+                            :items-per-page="isPlayoffs ? topPlayers.length : players.filter(player => !player.injury).length"
                             class="elevation-1 mb-4"
                         >
                             <template v-slot:item.country="{ item }">
@@ -157,16 +179,27 @@
                             :items="nonContention"
                             item-key="id"
                             dense
+                            fixed-header
+                            hide-default-footer
+                            :items-per-page="nonContention.length"
+                            :search="searchFin"
                             class="elevation-1 mb-4"
                         >
                             <template v-slot:top>
                             <v-toolbar flat color="white">
-                                <v-toolbar-title class="title">Finishes</v-toolbar-title>
+                                <v-toolbar-title class="title text-uppercase">Finishes</v-toolbar-title>
                                 <v-divider
                                     class="mx-4"
                                     inset
                                     vertical
                                 ></v-divider>
+                                <div class="d-flex align-center">
+                                    <h2 class="mr-5 font-weight-bold text-uppercase">Search Golfer:</h2>
+                                    <v-text-field 
+                                    v-model="searchFin"
+                                    clearable
+                                    ></v-text-field>
+                                </div>
                                 <v-spacer></v-spacer>
                             <v-dialog v-model="dialog" max-width="250px">
                                 <v-card>
@@ -234,6 +267,8 @@ export default {
             e1: 0,
             scoreOptions: ['<262', '263-264', '265-266', '267-268', '269-270', '271-272', '273-274', '275-276', '277+'],
             selected: [],
+            searchField: '',
+            searchFin: '',
             headers: [
                 { text: 'First', sortable: true, value: 'first' },
                 { text: 'Last', value: 'last' },
@@ -413,10 +448,9 @@ export default {
 
 #game-setup-wrapper {
     height: 100vh;
-}
-
-.course-info {
-    color: $blue;
+    h1, h2 {
+        color: $blue;
+    }
 }
 
 .maxed {
