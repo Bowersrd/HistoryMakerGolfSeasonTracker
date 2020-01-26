@@ -35,7 +35,7 @@
                         <span v-show="item.total === 0">E</span> 
                     </p> 
                 </template>
-                <template v-slot:item.thru="{ item }">
+                <template v-slot:item.thru>
                     <p>F</p> 
                 </template>
                 <template v-slot:item.last="{ item }">

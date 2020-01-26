@@ -205,11 +205,10 @@
                                 </v-icon>
                             </template>
                         </v-data-table>  
-                        {{ field.filter(player => player.score !== null).length }} 
                         <v-btn
                         color="#083666"
                         class="white--text"
-                        :disabled="allScoresEntered"
+                        :disabled="false"
                         @click.native="startGame"
                         to="/game"
                         >

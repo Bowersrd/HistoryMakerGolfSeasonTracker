@@ -94,8 +94,6 @@ const getDefaultState = () => {
           event.picture = picture
         }
       })
-
-      console.log(state.schedule)
     },
     EDIT_EVENT: (state, { event, index, playoff }) => {
       playoff ? Object.assign(state.playoffSchedule[index], event) : Object.assign(state.schedule[index], event)
@@ -222,6 +220,7 @@ const getDefaultState = () => {
     SET_LAST_RANK: (state) => {
       state.players.forEach(player => player.lastRank = player.rank)
       state.players.forEach(player => player.score = null)
+      state.players.forEach(player => player.perks = [])
     },
     SET_VIDEO_STATUS: (state) => {
       state.watchedVideo = true

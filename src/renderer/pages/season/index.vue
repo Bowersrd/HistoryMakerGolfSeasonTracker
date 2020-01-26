@@ -42,8 +42,8 @@
         if (file !== undefined) {
           const season = JSON.parse(fs.readFileSync(file[0], 'utf8'));
           if (season !== undefined) {
-            console.log(season)
             this.$store.dispatch('season/importSeason', season)
+            this.$store.dispatch('game/resetGame')
           }
         }
       }

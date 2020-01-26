@@ -9,12 +9,13 @@ const getDefaultState = () => {
       currentHole: 1,
       group: 0,
       gameEnded: false,
+      checkEmerge: false,
       emerge: 0,
       counter: 1,
       holeSync: [1,2,1,3,2,1,4,3,2,1,5,4,3,2,1,6,5,4,3,2,1,7,6,5,4,3,2,8,7,6,5,4,3,9,8,7,6,5,4,10,9,8,7,6,5,11,10,9,8,7,6,12,11,10,9,8,7,13,12,11,10,9,8,14,13,12,11,10,9,15,14,13,12,11,10,16,15,14,13,12,11,17,16,15,14,13,12,18,17,16,15,14,13,18,17,16,15,14,18,17,16,15,18,17,16,18,17,18],
-      holeSyncEmerge: [1,2,1,3,2,1,4,3,2,1,5,4,3,2,1,6,5,4,3,2,1,7,6,5,4,3,2,8,7,6,5,4,3,9,8,7,6,5,4,10,9,8,7,6,5,11,10,9,8,7,6,12,11,10,9,8,7,13,12,11,10,9,8,14,13,12,11,10,9,16,15,14,13,12,11,10,17,16,15,14,13,12,11,18,17,16,15,14,13,12,18,17,16,15,14,13,18,17,16,15,14,18,17,16,15,18,17,16,18,17,18],
+      holeSyncEmerge: [1,2,1,3,2,1,4,3,2,1,5,4,3,2,1,6,5,4,3,2,1,7,6,5,4,3,2,8,7,6,5,4,3,9,8,7,6,5,4,10,9,8,7,6,5,11,10,9,8,7,6,12,11,10,9,8,7,13,12,11,10,9,8,14,13,12,11,10,9,1,16,15,14,13,12,11,10,17,16,15,14,13,12,11,18,17,16,15,14,13,12,18,17,16,15,14,13,18,17,16,15,14,18,17,16,15,18,17,16,18,17,18],
       groupSync:[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,1,2,3,4,5,2,3,4,5,3,4,5,4,5,5],
-      groupSyncEmerge:[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,1,2,3,4,5,6,2,3,4,5,6,3,4,5,6,4,5,6,5,6,6],
+      groupSyncEmerge:[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,1,2,3,4,5,6,2,3,4,5,6,3,4,5,6,4,5,6,5,6,6],
       convertedScores: [
         {scores: [266,267,268,269,270,271,271,272,273]},
         {scores: [269,270,271,272,273,274,274,275,276]},
@@ -179,8 +180,11 @@ const getDefaultState = () => {
         state.pairings[state.group].a.today[state.currentHole - 1] = today
         
         const todayA = state.pairings[state.group].a.today.reduce(reducer)
-        
+
         state.pairings[state.group].a.total = state.pairings[state.group].a.score - coursePar + todayA
+
+        // state.pairings[state.group].a.scorecard.forEach(hole => hole.score = 4) -- USED FOR DEBUGGING
+
       } else {
         state.pairings[state.group].b.scorecard[state.currentHole - 1].score = score
         state.pairings[state.group].b.today[state.currentHole - 1] = today
@@ -188,6 +192,9 @@ const getDefaultState = () => {
         const todayB = state.pairings[state.group].b.today.reduce(reducer)
 
         state.pairings[state.group].b.total = state.pairings[state.group].b.score - coursePar + todayB
+
+        // state.pairings[state.group].b.scorecard.forEach(hole => hole.score = 4) -- USED FOR DEBUGGING
+        
       }
       
       pairs.sort((a,b) => a.total - b.total)
@@ -206,26 +213,33 @@ const getDefaultState = () => {
 
         // ADD FINAL ROUND TO SCORE
 
-      field.forEach(player => {
-        let round = player.scorecard.map(hole => hole.score)
-        let finalScore = round.reduce(reducer)
+        field.forEach(player => {
+          let round = player.scorecard.map(hole => hole.score)
+          let finalScore = round.reduce(reducer)
 
         if (finalScore !== 0) {
           player.score = player.score + finalScore
         }
       })
       } else {
-          state.emerge > 0 ? state.group = (state.groupSyncEmerge[state.counter], state.currentHole = state.holeSyncEmerge[state.counter]) : (state.group = state.groupSync[state.counter], state.currentHole = state.holeSync[state.counter])
+          state.emerge > 0 ? (state.groupSyncEmerge[state.counter], state.currentHole = state.holeSyncEmerge[state.counter]) : (state.group = state.groupSync[state.counter], state.currentHole = state.holeSync[state.counter])
           state.counter++
+      }
+
+      if (state.counter === 70) {
+        state.checkEmerge = true
       }
     },
     PREV_HOLE: (state) => {
       if (state.counter === 1) {
         // Do Nothing
       } else {
-        state.emerge > 0 ? state.group = (state.group = state.groupSyncEmerge[state.counter - 2], state.currentHole = state.holeSyncEmerge[state.counter - 2]) : (state.group = state.groupSync[state.counter - 2], state.currentHole = state.holeSync[state.counter - 2])             
-        }
-      state.counter--
+        state.emerge > 0 ? (state.group = state.groupSyncEmerge[state.counter - 2], state.currentHole = state.holeSyncEmerge[state.counter - 2]) : (state.group = state.groupSync[state.counter - 2], state.currentHole = state.holeSync[state.counter - 2])             
+        state.counter--  
+      }
+    },
+    SET_EMERGE_STATUS: state => {
+      state.checkEmerge = false
     },
     SORT_FIELD: (state) => {
       state.field.sort((a,b) => a.score - b.score)
@@ -300,16 +314,50 @@ const getDefaultState = () => {
 
       contenders.a.score = 288 - parTotal + lowestScore + 1
       contenders.a.total = lowestScore + 1
+      contenders.a.ec = true
 
       contenders.b.score = 288 - parTotal + lowestScore + 1
       contenders.b.total = lowestScore + 1
+      contenders.b.ec = true
 
       state.pairings.unshift(contenders)
 
       state.emerge = 1
+      state.counter++
 
-    }
+    },
+    ADD_PERK: (state, { perk, letter }) => {
+      
+      const playerA = state.pairings[state.group].a
+      const playerB = state.pairings[state.group].b
+      const newPerk = { name: perk, tfn: false}
+
+      if (letter === 'a') {
+        if (playerA.perks.map(perk => perk.name).includes(newPerk.name)) {
+
+          let exsistingPerk = playerA.perks.find(perk => perk.name === newPerk.name)
+          let index = playerA.perks.indexOf(exsistingPerk)
+
+          playerA.perks.splice(index, 1)
+
+        } else {
+          playerA.perks.push(newPerk)
+        }
+      } else {
+        if (playerB.perks.map(perk => perk.name).includes(newPerk.name)) {
+          
+          let exsistingPerk = playerB.perks.find(perk => perk.name === newPerk.name)
+          let index = playerB.perks.indexOf(exsistingPerk)
+
+          playerB.perks.splice(index, 1)
+
+        } else {
+          playerB.perks.push(newPerk)
+        }
+      }
+
   }
+}
   
   export const actions = {
     resetGame ({ commit }) {
@@ -345,6 +393,9 @@ const getDefaultState = () => {
     prevHole ({ commit }) {
       commit('PREV_HOLE')
     },
+    setEmergeStatus ({ commit }) {
+      commit('SET_EMERGE_STATUS')
+    },
     sortField ({ commit }) {
       commit('SORT_FIELD')
     },
@@ -362,5 +413,8 @@ const getDefaultState = () => {
     },
     setEmergingContenders ({ commit }, { contenders, parTotal }) {
       commit('SET_EMERGING_CONTENDERS', { contenders, parTotal })
+    },
+    addPerk ({ commit }, { perk, letter }) {
+      commit('ADD_PERK', { perk, letter })
     }
   }

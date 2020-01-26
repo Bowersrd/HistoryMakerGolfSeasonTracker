@@ -155,7 +155,7 @@
                 <p class="font-weight-bold ml-2">TOURNAMENTS</p>
             </v-card-subtitle>
             <v-card-subtitle>
-                <MarqueeText :repeat="10" v-if="!isPlayoffs">
+                <MarqueeText :duration="schedule.length * 2.75" :repeat="schedule.length < 10 ? 10 : null" v-if="!isPlayoffs">
                     <span v-for="event in schedule.filter(event => !event.winner)" :key="event.id">
                         {{ event.name }} - {{ event.course }} &nbsp; &nbsp; | &nbsp; &nbsp;
                     </span>

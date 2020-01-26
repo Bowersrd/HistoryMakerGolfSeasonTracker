@@ -1,13 +1,22 @@
 <template>
     <div id="score-wrapper">
-        <!-- <div class="d-flex perks">
-            <p class="body-2 green font-weight-bold">Lucky</p>
-            <p class="body-2 yellow font-weight-bold">Sunny</p>
-        </div> -->
+        <div class="d-flex perks">
+            <p 
+            class="body-2 font-weight-bold" 
+            :class="{
+                'green' : perk.name === 'Lucky',
+                'yellow darken-1' : perk.name === 'Sunny',
+                'grey darken-1' : perk.name === 'Stormy',
+                'blue' : perk.name === 'Ex. Control',
+            }" 
+            v-for="(perk, index) in golfer.perks" 
+            :key="index"
+            > {{ perk.name }} </p>
+        </div> 
         <div id="scorecard-wrapper">
             <div class="d-flex pa-2 justify-space-between">
                 <div class="d-flex align-center" id="name">
-                    <p class="headline white--text text-uppercase ml-4"> {{ golfer }} </p>
+                    <p class="headline white--text text-uppercase ml-4"> {{ golfer.first }} {{ golfer.last }} </p>
                     <img class="ml-4" height="60%" :src="require(`@/assets/img/flags/${country}.png`)" alt="Country Flag" /> 
                 </div>
                 <div class="d-flex align-center justify-center" id="score">
@@ -18,7 +27,7 @@
                 <img class="pb-2" height="100px" src="@/assets/img/pga_tour.png" alt="Country Flag" />
                 <div id="scorecard">
                     <div class="hole-number d-flex justify-space-around">
-                        <p v-for="holeNumber in holeNumbers" :key=holeNumber> {{ holeNumber }} </p>
+                        <p v-for="holeNumber in holeNumbers" :key="holeNumber" :class="holeNumber === currentHole ? 'active' : ''"> {{ holeNumber }} </p>
                     </div>
                     <div class="hole-par d-flex justify-space-around">
                         <div class="d-flex" id="tags" v-for="(hole, index) in holes" :key="hole.no">
@@ -54,8 +63,11 @@
             <div class="d-flex flex-wrap scorecard-actions">
                 <div class="d-flex flex-wrap score-actions mt-1">
                     <v-row>
-                        <v-col cols="7">
+                        <v-col cols="8">
                             <v-btn v-for="action in actions" :key="action" tile width="100px" color="#083666" dark class="caption mb-2" @click="sendScore(action)"> {{ action }} </v-btn>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-btn v-for="perk in perks" :key="perk" tile width="105px" color="#083666" dark class="caption mb-2" @click="addPerk(perk)"> {{ perk }} </v-btn>
                         </v-col>
                     </v-row>
                 </div>
@@ -70,7 +82,8 @@ export default {
     data: () => {
         return {
             holeNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, null, null, 10, 11, 12, 13, 14, 15, 16, 17, 18, null, null],
-            actions: ['Ace', 'Eagle', 'Birdie', 'Par', 'Bogey', 'Dbl Bogey', 'Tpl Bogey', '+4 Over']
+            actions: ['Ace', 'Eagle', 'Birdie', 'Par', 'Bogey', 'Dbl Bogey', 'Tpl Bogey', '+4 Over'],
+            perks: ['Lucky', 'Ex. Control', 'Sunny', 'Stormy']
         }
     },
     computed: {
@@ -111,11 +124,17 @@ export default {
             } else {
                 return total
             }
+        },
+        currentHole () {
+            return this.$store.state.game.currentHole
         }
     },
     methods: {
         sendScore (action) {
             this.$emit('getScore', action )
+        },
+        addPerk (perk) {
+            this.$emit('getPerk', perk)
         }
     }    
 }
@@ -235,5 +254,9 @@ $gradient-black: linear-gradient(#0D0D0D, #1D1D1D);
     p {
         padding: 5px 15px;
     }
+}
+
+.active {
+    background: $blue;
 }
 </style>

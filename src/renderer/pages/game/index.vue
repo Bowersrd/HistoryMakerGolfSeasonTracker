@@ -30,53 +30,51 @@
                     <img class="mt-2" height="100%" :src="require(`@/assets/img/flags/${item.country}.png`)" alt="Country Flag" />    
                 </template>
                 <template v-slot:item.today="{ item }">
-                    <p>
-                        <span v-show="item.today.reduce((accumulator, currentValue) => accumulator + currentValue) > 0">+{{ item.today.reduce((accumulator, currentValue) => accumulator + currentValue) }}</span>
-                        <span v-show="item.today.reduce((accumulator, currentValue) => accumulator + currentValue) < 0"> {{ item.today.reduce((accumulator, currentValue) => accumulator + currentValue) }} </span> 
-                        <span v-show="item.today.reduce((accumulator, currentValue) => accumulator + currentValue) === 0">E</span>
-                    </p> 
+                    <span v-show="item.today.reduce((accumulator, currentValue) => accumulator + currentValue) > 0">+{{ item.today.reduce((accumulator, currentValue) => accumulator + currentValue) }}</span>
+                    <span v-show="item.today.reduce((accumulator, currentValue) => accumulator + currentValue) < 0"> {{ item.today.reduce((accumulator, currentValue) => accumulator + currentValue) }} </span> 
+                    <span v-show="item.today.reduce((accumulator, currentValue) => accumulator + currentValue) === 0">E</span>
                 </template>
                 <template v-slot:item.total="{ item }">
-                    <p>
-                        <span v-show="item.total > 0">+{{ item.total }}</span>
-                        <span v-show="item.total < 0"> {{ item.total }} </span> 
-                        <span v-show="item.total === 0">E</span> 
-                    </p> 
+                    <span v-show="item.total > 0">+{{ item.total }}</span>
+                    <span v-show="item.total < 0"> {{ item.total }} </span> 
+                    <span v-show="item.total === 0">E</span> 
                 </template>
                 <template v-slot:item.thru="{ item }">
-                    <p>
-                        <span v-show="item.scorecard.filter(score => score.score === null).length !== 0">{{ 18 - item.scorecard.filter(score => score.score === null).length }}</span>
-                        <span class="yellow--text text--darken-2" v-show="item.scorecard.filter(score => score.score === null).length === 0">
-                            {{ item.scorecard.map(hole => hole.score).reduce((accumulator, currentValue) => accumulator + currentValue) }}
-                        </span>
-                    </p> 
+                    <span v-show="item.scorecard.filter(score => score.score === null).length !== 0">{{ 18 - item.scorecard.filter(score => score.score === null).length }}</span>
+                    <span class="yellow--text text--darken-2" v-show="item.scorecard.filter(score => score.score === null).length === 0">
+                        {{ item.scorecard.map(hole => hole.score).reduce((accumulator, currentValue) => accumulator + currentValue) }}
+                    </span>
                 </template>
                 <template v-slot:item.last="{ item }">
-                    {{ item.first }} {{ item.last }}   
+                    <span class="text-uppercase"> {{ item.first }} {{ item.last }} </span>
                 </template>
             </v-data-table>
         </div>
         <div id="play-area">
             <div class="golfer ml-10 mt-12">
                 <Scorecard
-                :golfer="`${pairs[group].a.first} ${pairs[group].a.last}`"
+                :golfer="pairs[group].a"
                 :country="pairs[group].a.country"
                 :today="pairs[group].a.today"
                 :holes="course.holes"
                 :scorecard="pairs[group].a.scorecard"
-                v-on:getScore="addScore($event, 'a')"
+                @getScore="addScore($event, 'a')"
+                @getPerk="addPerk($event, 'a')"
                 :key="componentKeyA"
+                :class="Math.abs(lowestScore - pairs[group].a.total) > 6 ? 'outOfContention' : ''"
                 ></Scorecard>
             </div>
             <div class="golfer ml-10 mt-10">
                 <Scorecard
-                :golfer="`${pairs[group].b.first} ${pairs[group].b.last}`"
+                :golfer="pairs[group].b"
                 :country="pairs[group].b.country"
                 :today="pairs[group].b.today"
                 :holes="course.holes"
                 :scorecard="pairs[group].b.scorecard"
-                v-on:getScore="addScore($event, 'b')"
+                @getScore="addScore($event, 'b')"
+                @getPerk="addPerk($event, 'b')"
                 :key="componentKeyB"
+                :class="Math.abs(lowestScore - pairs[group].b.total) > 6 ? 'outOfContention' : ''"
                 ></Scorecard>
             </div>
         </div>
@@ -87,7 +85,7 @@
             </div>
             <p class="title white--text">{{ course.holes[currentHole - 1].yds }} yds</p>
         </div>
-        <v-btn class="mb-5 back-btn" dark large fab color="#083666" @click="prevHole">
+        <v-btn class="mb-5 back-btn white--text" large fab color="#083666" @click="prevHole">
             <v-icon>fas fa-long-arrow-alt-left</v-icon>
         </v-btn>
         <v-btn class="mb-5 forward-btn" dark large fab color="#083666" @click="nextHole">
@@ -122,7 +120,7 @@
         ></Modal>
         <v-dialog
         max-width="500px"
-        v-model="emergeDialog"
+        v-model="checkEmerge"
         >
             <v-card>
                 <v-container>
@@ -169,7 +167,7 @@
                                         </template>
                                 </v-autocomplete>
                                 <v-autocomplete
-                                :items="field"
+                                :items="field.filter(player => player.score > 250 && player.score !== 500)"
                                 item-text="last"
                                 v-if="emerged === 2"
                                 v-model="contenders.b"
@@ -182,7 +180,6 @@
                                             {{ data.item.first }} {{ data.item.last }}
                                         </template>
                                 </v-autocomplete>
-                                {{ contenders }}
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
@@ -211,15 +208,14 @@ export default {
     data: () => {
         return {
             headers: [
-                { text: 'FINAL ROUND', value: 'last' },
-                { text: '', value: 'country', width: 170 },
+                { text: '', value: 'country', width: 20 },
+                { text: 'FINAL ROUND', value: 'last',  width: 215 },
                 { text: 'TOTAL', value: 'total', align: 'center' },
                 { text: 'THRU', value: 'thru', align: 'center' },
                 { text: 'TODAY', value: 'today', align: 'center' },
             ],
             componentKeyA: 0,
             componentKeyB: 0,
-            emergeDialog: false,
             isEmerge: false,
             emerged: 0,
             contenders: {a: [{score: null}], b: [{score: null}]}
@@ -255,7 +251,17 @@ export default {
             return this.$store.state.game.field
         },
         gameEnded () {
-            return this.$store.state.game.gameEnded
+            return this.$store.state.game.gameEnded      
+        },
+        checkEmerge () {
+            // return this.$store.state.game.checkEmerge ADD EMERGING CONTENDERS LATER
+            return false
+        },
+        lowestScore () {
+            let pairA = this.pairs.map(pair => pair.a.total)
+            let pairB = this.pairs.map(pair => pair.b.total)
+            let scores = pairA.concat(pairB)
+            return Math.min(...scores)
         }
     },
     methods: {
@@ -302,6 +308,14 @@ export default {
 
             this.$store.dispatch('game/addScore', { score, letter, today, coursePar, pairs })
         },
+        addPerk (perk, letter) {
+            this.$store.dispatch('game/addPerk', { perk, letter })
+            if (letter === 'a') {
+                this.componentKeyA += 1
+            } else {
+                this.componentKeyB += 1
+            }
+        },
         nextHole () {
             this.$store.dispatch('game/nextHole')
         },
@@ -310,7 +324,7 @@ export default {
         },
         emerge (val) {
             if (val === 0) {
-                this.emergeDialog = false 
+                this.$store.dispatch('game/setEmergeStatus')
             } else {
                 val === 1 ? this.emerged = 1 : this.emerged = 2
                 this.emergeDialog = false
@@ -404,6 +418,10 @@ export default {
     background: $blue;
     position: absolute;
     bottom: 0;
+}
+
+.outOfContention {
+    filter: grayscale(1);
 }
 
 </style>
