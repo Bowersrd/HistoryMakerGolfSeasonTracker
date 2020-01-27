@@ -67,6 +67,7 @@
                             :headers="headers"
                             :items="isPlayoffs ? topPlayers : players.filter(player => !player.injury)"
                             item-key="id"
+                            sort-by="last"
                             show-select
                             dense
                             fixed-header
@@ -178,6 +179,7 @@
                             :headers="resultHeaders"
                             :items="nonContention"
                             item-key="id"
+                            sort-by="last"
                             dense
                             fixed-header
                             hide-default-footer
@@ -453,7 +455,7 @@ export default {
     }
 }
 
-.maxed {
+.maxed, .title {
     color: #CC0001
 }
 

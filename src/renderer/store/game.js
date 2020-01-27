@@ -9,6 +9,8 @@ const getDefaultState = () => {
       currentHole: 1,
       group: 0,
       gameEnded: false,
+      isTiedFinish: false,
+      topScore: 0,
       checkEmerge: false,
       emerge: 0,
       counter: 1,
@@ -205,22 +207,33 @@ const getDefaultState = () => {
       })
     },
     NEXT_HOLE: (state) => {
-      if (state.counter === 108) {
-        let reducer = (accumulator, currentValue) => accumulator + currentValue
-        let field = state.field
+      if (state.counter >= 108) {
+        const totalScores = state.pairings.map(pair => pair.a.total).concat(state.pairings.map(pair => pair.b.total))
+        const lowestScore = Math.min(...totalScores)
+        const tied = totalScores.filter(score => score === lowestScore).length > 1
 
-        state.gameEnded = true
+        if (tied) {
 
-        // ADD FINAL ROUND TO SCORE
+          state.topScore = lowestScore
+          state.isTiedFinish = true
 
-        field.forEach(player => {
-          let round = player.scorecard.map(hole => hole.score)
-          let finalScore = round.reduce(reducer)
+        } else {
+          const reducer = (accumulator, currentValue) => accumulator + currentValue
+          const field = state.field
 
-        if (finalScore !== 0) {
-          player.score = player.score + finalScore
+          state.gameEnded = true
+
+          // ADD FINAL ROUND TO SCORE
+
+          field.forEach(player => {
+            let round = player.scorecard.map(hole => hole.score)
+            let finalScore = round.reduce(reducer)
+
+          if (finalScore !== 0) {
+              player.score = player.score + finalScore
+            }
+          })         
         }
-      })
       } else {
           state.emerge > 0 ? (state.groupSyncEmerge[state.counter], state.currentHole = state.holeSyncEmerge[state.counter]) : (state.group = state.groupSync[state.counter], state.currentHole = state.holeSync[state.counter])
           state.counter++
@@ -355,6 +368,26 @@ const getDefaultState = () => {
           playerB.perks.push(newPerk)
         }
       }
+  },
+  SET_WINNER: (state, id) => {
+    const reducer = (accumulator, currentValue) => accumulator + currentValue
+    const field = state.field
+
+    state.field.forEach(player => player.id === id ? player.score = player.score - 1 : '')
+
+    state.isTiedFinish = false
+    state.gameEnded = true
+
+    // ADD FINAL ROUND TO SCORE
+
+    field.forEach(player => {
+      let round = player.scorecard.map(hole => hole.score)
+      let finalScore = round.reduce(reducer)
+
+    if (finalScore !== 0) {
+        player.score = player.score + finalScore
+      }
+    })
 
   }
 }
@@ -416,5 +449,8 @@ const getDefaultState = () => {
     },
     addPerk ({ commit }, { perk, letter }) {
       commit('ADD_PERK', { perk, letter })
+    },
+    setWinner ({ commit }, id) {
+      commit('SET_WINNER', id)
     }
   }

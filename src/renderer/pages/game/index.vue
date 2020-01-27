@@ -120,72 +120,21 @@
         ></Modal>
         <v-dialog
         max-width="500px"
-        v-model="checkEmerge"
+        v-model="isTiedFinish"
+        persistent
         >
             <v-card>
                 <v-container>
                     <v-row>
                         <v-col cols="12">
-                            <v-card-title>Emerging Contenders</v-card-title>
-                            <v-card-subtitle>Are there any contenders emerging this tournament?</v-card-subtitle>
+                            <v-card-title>Playoff Finish</v-card-title>
+                            <v-card-subtitle>Two (2) or more golfers are tied for the lead!</v-card-subtitle>
                             <v-card-text>
-                                If yes, next dialog will allow you to input the emerging contender(s). If not, continue the game as normal.
+                                Play your playoff away from the screen and when a winner emerges, select the golfer below to declare them the winner.
                             </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn text @click="emerge(0)">None</v-btn>
-                                <v-btn text @click="emerge(1)">One</v-btn>
-                                <v-btn text @click="emerge(2)">Two</v-btn>
-                            </v-card-actions>
-                        </v-col>
-                    </v-row>
-                </v-container>
-            </v-card>
-        </v-dialog>
-        <v-dialog
-        max-width="500px"
-        v-model="isEmerge"
-        >
-            <v-card>
-                <v-container>
-                    <v-row>
-                        <v-col cols="12">
-                            <v-card-title>Who is Emerging?</v-card-title>
-                            <v-card-subtitle>Input the golfer(s) that is/are emerging!</v-card-subtitle>
-                            <v-card-text>
-                                <v-autocomplete
-                                :items="field.filter(player => player.score > 250 && player.score !== 500)"
-                                item-text="last"
-                                v-model="contenders.a"
-                                return-object
-                                >
-                                    <template slot="selection" slot-scope="data">
-                                        {{ data.item.first }} {{ data.item.last }}
-                                    </template>
-                                    <template slot="item" slot-scope="data">
-                                            {{ data.item.first }} {{ data.item.last }}
-                                        </template>
-                                </v-autocomplete>
-                                <v-autocomplete
-                                :items="field.filter(player => player.score > 250 && player.score !== 500)"
-                                item-text="last"
-                                v-if="emerged === 2"
-                                v-model="contenders.b"
-                                return-object
-                                >
-                                    <template slot="selection" slot-scope="data">
-                                        {{ data.item.first }} {{ data.item.last }}
-                                    </template>
-                                    <template slot="item" slot-scope="data">
-                                            {{ data.item.first }} {{ data.item.last }}
-                                        </template>
-                                </v-autocomplete>
+                            <v-card-text class="mt-n4">
+                                <v-btn class="mt-3 mx-1" small dark v-for="pair in mappedPairs.filter(player => player.total === lowestScore)" :key="pair.id" @click="setWinner(pair.id)"> {{ pair.total }} {{ pair.last }} </v-btn>
                             </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn text @click="emergeCancel">Back</v-btn>
-                                <v-btn text @click="emergeConfirm">Continue</v-btn>
-                            </v-card-actions>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -262,6 +211,12 @@ export default {
             let pairB = this.pairs.map(pair => pair.b.total)
             let scores = pairA.concat(pairB)
             return Math.min(...scores)
+        },
+        isTiedFinish () {
+            return this.$store.state.game.isTiedFinish
+        },
+        topScore () {
+            return this.$store.sate.game.topScore
         }
     },
     methods: {
@@ -340,6 +295,9 @@ export default {
             let parTotal = this.course.holes[15].par + this.course.holes[16].par + this.course.holes[17].par
 
             this.$store.dispatch('game/setEmergingContenders', { contenders: this.contenders, parTotal })
+        },
+        setWinner (id) {
+            this.$store.dispatch('game/setWinner', id)
         }
     },
     created () {
