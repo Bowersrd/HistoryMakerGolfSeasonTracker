@@ -56,10 +56,14 @@
                 :golfer="pairs[group].a"
                 :country="pairs[group].a.country"
                 :today="pairs[group].a.today"
+                :total="pairs[group].a.total"
                 :holes="course.holes"
                 :scorecard="pairs[group].a.scorecard"
+                :showTodayScore="showToday"
                 @getScore="addScore($event, 'a')"
                 @getPerk="addPerk($event, 'a')"
+                @getTfn="addTfn($event, 'a')"
+                @toggleScorecardScore="toggleToday"
                 :key="componentKeyA"
                 :class="Math.abs(lowestScore - pairs[group].a.total) > 6 ? 'outOfContention' : ''"
                 ></Scorecard>
@@ -69,12 +73,17 @@
                 :golfer="pairs[group].b"
                 :country="pairs[group].b.country"
                 :today="pairs[group].b.today"
+                :total="pairs[group].b.total"
                 :holes="course.holes"
                 :scorecard="pairs[group].b.scorecard"
+                :showTodayScore="showToday"
                 @getScore="addScore($event, 'b')"
                 @getPerk="addPerk($event, 'b')"
+                @getTfn="addTfn($event, 'b')"
+                @toggleScorecardScore="toggleToday"
                 :key="componentKeyB"
                 :class="Math.abs(lowestScore - pairs[group].b.total) > 6 ? 'outOfContention' : ''"
+                v-if="pairs[group].b.last !== undefined"
                 ></Scorecard>
             </div>
         </div>
@@ -165,9 +174,7 @@ export default {
             ],
             componentKeyA: 0,
             componentKeyB: 0,
-            isEmerge: false,
-            emerged: 0,
-            contenders: {a: [{score: null}], b: [{score: null}]}
+            showToday: true
         }
     },
     computed: {
@@ -201,10 +208,6 @@ export default {
         },
         gameEnded () {
             return this.$store.state.game.gameEnded      
-        },
-        checkEmerge () {
-            // return this.$store.state.game.checkEmerge ADD EMERGING CONTENDERS LATER
-            return false
         },
         lowestScore () {
             let pairA = this.pairs.map(pair => pair.a.total)
@@ -256,9 +259,9 @@ export default {
             today = score - par
 
             if (letter === 'a') {
-                this.componentKeyA += 1
+                this.componentKeyA++
             } else {
-                this.componentKeyB += 1
+                this.componentKeyB++
             }
 
             this.$store.dispatch('game/addScore', { score, letter, today, coursePar, pairs })
@@ -266,9 +269,17 @@ export default {
         addPerk (perk, letter) {
             this.$store.dispatch('game/addPerk', { perk, letter })
             if (letter === 'a') {
-                this.componentKeyA += 1
+                this.componentKeyA++
             } else {
-                this.componentKeyB += 1
+                this.componentKeyB++
+            }
+        },
+        addTfn (perk, letter) {
+            this.$store.dispatch('game/addTfn', { perk, letter })
+            if (letter === 'a') {
+                this.componentKeyA++
+            } else {
+                this.componentKeyB++
             }
         },
         nextHole () {
@@ -277,34 +288,17 @@ export default {
         prevHole () {
             this.$store.dispatch('game/prevHole')
         },
-        emerge (val) {
-            if (val === 0) {
-                this.$store.dispatch('game/setEmergeStatus')
-            } else {
-                val === 1 ? this.emerged = 1 : this.emerged = 2
-                this.emergeDialog = false
-                this.isEmerge = true
-            }
-        },
-        emergeCancel () {
-            this.isEmerge = false
-            this.emerged = 0
-            this.emergeDialog = true
-        },
-        emergeConfirm () {
-            let parTotal = this.course.holes[15].par + this.course.holes[16].par + this.course.holes[17].par
-
-            this.$store.dispatch('game/setEmergingContenders', { contenders: this.contenders, parTotal })
-        },
         setWinner (id) {
             this.$store.dispatch('game/setWinner', id)
+        },
+        toggleToday () {
+            this.showToday ? this.showToday = false : this.showToday = true
         }
     },
     created () {
         let par = (this.course.par * 3)
         let pairs = this.mappedPairs
         this.$store.dispatch('game/setupLeaderboard', { par, pairs })
-        this.isEmerge = false
     }
 }
 </script>

@@ -46,7 +46,7 @@
                         <span v-else-if="!isEndOfSeason"> {{ schedule[currentWeek].course }} </span>
                         <span v-else>PGA Tour Champion</span>
                     </v-card-subtitle>
-                    <v-btn id="play" color="#CC0001" fab large dark to="/game/setup" @click.native="setLastRank" v-if="!activeGame && !isEndOfSeason">
+                    <v-btn id="play" color="#CC0001" fab large dark to="/game/setup" @click.native="setLastRank(); resetGame()" v-if="!activeGame && !isEndOfSeason">
                         <v-icon>fas fa-play</v-icon>
                     </v-btn>
                     <v-btn id="play" color="#CC0001" fab large dark to="/game" v-else-if="!isEndOfSeason">
@@ -170,9 +170,6 @@
         <v-btn class="mt-10 mb-4 back-btn" dark large fab color="#CC0001" to="/season">
             <v-icon>fas fa-long-arrow-alt-left</v-icon>
         </v-btn>
-        <v-btn class="mt-10 mb-4 forward-btn" dark large fab color="#CC0001" @click="lookAhead">
-            <v-icon>fas fa-long-arrow-alt-right</v-icon>
-        </v-btn>
     </div>
 </template>
 
@@ -189,7 +186,7 @@ import VideoPlayer from '../../components/VideoPlayer'
       return {
         headers: [
         { text: '', value: 'rank', width: 20, align: 'center' },
-        { text: 'Player', value: 'last' },
+        { text: 'Player', value: 'last', width: 192 },
         { text: 'Country', value: 'country' },
         { text: 'FedEx Pts', value: 'points' },
         { text: 'Events', value: 'events.length' },
@@ -225,8 +222,8 @@ import VideoPlayer from '../../components/VideoPlayer'
         }
     },
     methods: {
-        lookAhead () {
-            this.$store.dispatch('season/lookAhead')
+        resetGame () {
+            this.$store.dispatch('game/resetGame')
         },
         setLastRank () {
             this.$store.dispatch('season/setLastRank')

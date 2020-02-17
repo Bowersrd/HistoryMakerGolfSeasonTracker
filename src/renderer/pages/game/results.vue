@@ -1,27 +1,22 @@
 <template>
     <div class="d-flex align-center justify-center" id="results-wrapper">
         <div class="container">
+            <div class="table-header">
+                <p class="display-1 font-weight-bold white--text ml-5 mt-2"> {{ event }} </p>
+                <p class="subtitle-1 white--text ml-5"> {{ courseName }} </p>
+            </div>
             <v-data-table
-                height="650px"
+                height="550px"
                 :headers="headers"
                 :items="field"
                 :items-per-page="field.length"
                 dense
                 dark
+                fixed-header
                 :sort-by="['score']"
                 item-key="last"
                 class="elevation-1 mb-4 grey darken-4"
             >
-                <template v-slot:header="{ props: { headers } }">
-                    <thead>
-                    <tr>
-                        <th class="table-header" :colspan="headers.length">
-                            <p class="display-1 font-weight-bold white--text ml-2 mt-2"> {{ event }} </p>
-                            <p class="subtitle-1 white--text ml-2"> {{ courseName }} </p>
-                        </th>
-                    </tr>
-                    </thead>
-                </template>
                 <template v-slot:item.rank="{ item }">
                     <p> {{ item.rank }} </p>   
                 </template>
@@ -108,7 +103,7 @@ export default {
         this.$store.dispatch('game/rankField')
         this.$store.dispatch('game/addFinish')
         this.$store.dispatch('game/addTies')
-        this.$store.dispatch('game/setTotalStrokes')  
+        this.$store.dispatch('game/setTotalStrokes', this.course.par)  
     }
 }
 </script>
@@ -125,5 +120,8 @@ export default {
     background: $blue;
     height: 100px;
     text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 </style>

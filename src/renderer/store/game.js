@@ -11,13 +11,9 @@ const getDefaultState = () => {
       gameEnded: false,
       isTiedFinish: false,
       topScore: 0,
-      checkEmerge: false,
-      emerge: 0,
       counter: 1,
       holeSync: [1,2,1,3,2,1,4,3,2,1,5,4,3,2,1,6,5,4,3,2,1,7,6,5,4,3,2,8,7,6,5,4,3,9,8,7,6,5,4,10,9,8,7,6,5,11,10,9,8,7,6,12,11,10,9,8,7,13,12,11,10,9,8,14,13,12,11,10,9,15,14,13,12,11,10,16,15,14,13,12,11,17,16,15,14,13,12,18,17,16,15,14,13,18,17,16,15,14,18,17,16,15,18,17,16,18,17,18],
-      holeSyncEmerge: [1,2,1,3,2,1,4,3,2,1,5,4,3,2,1,6,5,4,3,2,1,7,6,5,4,3,2,8,7,6,5,4,3,9,8,7,6,5,4,10,9,8,7,6,5,11,10,9,8,7,6,12,11,10,9,8,7,13,12,11,10,9,8,14,13,12,11,10,9,1,16,15,14,13,12,11,10,17,16,15,14,13,12,11,18,17,16,15,14,13,12,18,17,16,15,14,13,18,17,16,15,14,18,17,16,15,18,17,16,18,17,18],
       groupSync:[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,1,2,3,4,5,2,3,4,5,3,4,5,4,5,5],
-      groupSyncEmerge:[0,0,1,0,1,2,0,1,2,3,0,1,2,3,4,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3,4,5,0,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,0,1,2,3,4,5,6,1,2,3,4,5,6,2,3,4,5,6,3,4,5,6,4,5,6,5,6,6],
       convertedScores: [
         {scores: [266,267,268,269,270,271,271,272,273]},
         {scores: [269,270,271,272,273,274,274,275,276]},
@@ -175,7 +171,7 @@ const getDefaultState = () => {
       }
     },
     ADD_SCORE: (state, { score, letter, today, coursePar, pairs }) => {
-      let reducer = (accumulator, currentValue) => accumulator + currentValue
+      const reducer = (accumulator, currentValue) => accumulator + currentValue
 
       if (letter === 'a') {
         state.pairings[state.group].a.scorecard[state.currentHole - 1].score = score
@@ -205,6 +201,7 @@ const getDefaultState = () => {
         pair.a.rank = pairs.indexOf(pair.a)
         pair.b.rank = pairs.indexOf(pair.b)
       })
+
     },
     NEXT_HOLE: (state) => {
       if (state.counter >= 108) {
@@ -235,24 +232,19 @@ const getDefaultState = () => {
           })         
         }
       } else {
-          state.emerge > 0 ? (state.groupSyncEmerge[state.counter], state.currentHole = state.holeSyncEmerge[state.counter]) : (state.group = state.groupSync[state.counter], state.currentHole = state.holeSync[state.counter])
+          state.group = state.groupSync[state.counter]
+          state.currentHole = state.holeSync[state.counter]
           state.counter++
-      }
-
-      if (state.counter === 70) {
-        state.checkEmerge = true
       }
     },
     PREV_HOLE: (state) => {
       if (state.counter === 1) {
         // Do Nothing
       } else {
-        state.emerge > 0 ? (state.group = state.groupSyncEmerge[state.counter - 2], state.currentHole = state.holeSyncEmerge[state.counter - 2]) : (state.group = state.groupSync[state.counter - 2], state.currentHole = state.holeSync[state.counter - 2])             
+        state.group = state.groupSync[state.counter - 2]
+        state.currentHole = state.holeSync[state.counter - 2]      
         state.counter--  
       }
-    },
-    SET_EMERGE_STATUS: state => {
-      state.checkEmerge = false
     },
     SORT_FIELD: (state) => {
       state.field.sort((a,b) => a.score - b.score)
@@ -307,37 +299,16 @@ const getDefaultState = () => {
       })
 
     },
-    SET_TOTAL_STROKES: (state) => {
+    SET_TOTAL_STROKES: (state, par) => {
       let field = state.field
-      // CODE FOR SETTING FINAL TOTAL  
+ 
       field.forEach(player => {
         if (player.score === 'CUT') {
           player.total = 'CUT'
         } else {
-            player.total = player.score - (72 * 4)
+            player.total = player.score - (par * 4)
         }
       })
-    },
-    SET_EMERGING_CONTENDERS: (state, { contenders, parTotal }) => {
-
-      const lowScoreA = state.pairings.map(pair => pair.a.total)
-      const lowScoreB = state.pairings.map(pair => pair.b.total)
-      const lowScores = lowScoreA.concat(lowScoreB)
-      const lowestScore = Math.min(...lowScores)
-
-      contenders.a.score = 288 - parTotal + lowestScore + 1
-      contenders.a.total = lowestScore + 1
-      contenders.a.ec = true
-
-      contenders.b.score = 288 - parTotal + lowestScore + 1
-      contenders.b.total = lowestScore + 1
-      contenders.b.ec = true
-
-      state.pairings.unshift(contenders)
-
-      state.emerge = 1
-      state.counter++
-
     },
     ADD_PERK: (state, { perk, letter }) => {
       
@@ -368,6 +339,19 @@ const getDefaultState = () => {
           playerB.perks.push(newPerk)
         }
       }
+  },
+  ADD_TFN: (state, { perk, letter }) => {
+
+      const playerA = state.pairings[state.group].a
+      const playerB = state.pairings[state.group].b
+
+      let editPerkA = playerA.perks.find(obj => obj === perk)
+      let editPerkB = playerB.perks.find(obj => obj === perk)
+
+      letter === 'a' ? editPerkA.tfn = !editPerkA.tfn : editPerkB.tfn = !editPerkB.tfn
+
+      console.log(state.field)
+
   },
   SET_WINNER: (state, id) => {
     const reducer = (accumulator, currentValue) => accumulator + currentValue
@@ -426,9 +410,6 @@ const getDefaultState = () => {
     prevHole ({ commit }) {
       commit('PREV_HOLE')
     },
-    setEmergeStatus ({ commit }) {
-      commit('SET_EMERGE_STATUS')
-    },
     sortField ({ commit }) {
       commit('SORT_FIELD')
     },
@@ -441,14 +422,17 @@ const getDefaultState = () => {
     addTies ({ commit }) {
       commit('ADD_TIES')
     },
-    setTotalStrokes ({ commit }) {
-      commit('SET_TOTAL_STROKES')
+    setTotalStrokes ({ commit }, par) {
+      commit('SET_TOTAL_STROKES', par)
     },
     setEmergingContenders ({ commit }, { contenders, parTotal }) {
       commit('SET_EMERGING_CONTENDERS', { contenders, parTotal })
     },
     addPerk ({ commit }, { perk, letter }) {
       commit('ADD_PERK', { perk, letter })
+    },
+    addTfn ({ commit }, { perk, letter }) {
+      commit('ADD_TFN', { perk, letter })
     },
     setWinner ({ commit }, id) {
       commit('SET_WINNER', id)

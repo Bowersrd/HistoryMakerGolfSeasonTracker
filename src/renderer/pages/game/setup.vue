@@ -179,11 +179,8 @@
                             :headers="resultHeaders"
                             :items="nonContention"
                             item-key="id"
-                            sort-by="last"
                             dense
                             fixed-header
-                            hide-default-footer
-                            :items-per-page="nonContention.length"
                             :search="searchFin"
                             class="elevation-1 mb-4"
                         >
@@ -239,7 +236,7 @@
                                 fas fa-edit
                                 </v-icon>
                             </template>
-                        </v-data-table>  
+                        </v-data-table> 
                         <v-btn
                         color="#083666"
                         class="white--text"

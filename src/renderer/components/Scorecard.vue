@@ -11,7 +11,11 @@
             }" 
             v-for="(perk, index) in golfer.perks" 
             :key="index"
-            > {{ perk.name }} </p>
+            @click="tillFurtherNotice(perk)"
+            > 
+                {{ perk.name }} 
+                <span class="caption" v-show="perk.tfn">(TFN)</span> 
+            </p>
         </div> 
         <div id="scorecard-wrapper">
             <div class="d-flex pa-2 justify-space-between">
@@ -20,7 +24,8 @@
                     <img class="ml-4" height="60%" :src="require(`@/assets/img/flags/${country}.png`)" alt="Country Flag" /> 
                 </div>
                 <div class="d-flex align-center justify-center" id="score">
-                    <p class="display-1 white--text text-uppercase"> {{ todayTotal }} </p>
+                    <p class="display-1 white--text text-uppercase" v-if="showTodayScore" @click="toggleScore"> {{ todayTotal }} </p>
+                    <p class="display-1 white--text text-uppercase" v-else @click="toggleScore"> {{ total }} </p>
                 </div>
             </div>
             <div class="d-flex pb-2">
@@ -78,12 +83,13 @@
 
 <script>
 export default {
-    props: ['golfer', 'country', 'holes', 'scorecard', 'today'],
+    props: ['golfer', 'country', 'holes', 'scorecard', 'today', 'total', 'showTodayScore'],
     data: () => {
         return {
             holeNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, null, null, 10, 11, 12, 13, 14, 15, 16, 17, 18, null, null],
             actions: ['Ace', 'Eagle', 'Birdie', 'Par', 'Bogey', 'Dbl Bogey', 'Tpl Bogey', '+4 Over'],
-            perks: ['Lucky', 'Ex. Control', 'Sunny', 'Stormy']
+            perks: ['Lucky', 'Ex. Control', 'Sunny', 'Stormy'],
+            showToday: true
         }
     },
     computed: {
@@ -135,6 +141,12 @@ export default {
         },
         addPerk (perk) {
             this.$emit('getPerk', perk)
+        },
+        tillFurtherNotice (perk) {
+            this.$emit('getTfn', perk)
+        },
+        toggleScore () {
+            this.$emit('toggleScorecardScore')
         }
     }    
 }
@@ -168,6 +180,9 @@ $gradient-black: linear-gradient(#0D0D0D, #1D1D1D);
     width: 12.25%;
     height: 50px;
     background: $gradient-blue;
+    p {
+        cursor: pointer;
+    }
 }
 
 #scorecard {
@@ -253,6 +268,7 @@ $gradient-black: linear-gradient(#0D0D0D, #1D1D1D);
     height: 30px;
     p {
         padding: 5px 15px;
+        cursor: pointer;
     }
 }
 
