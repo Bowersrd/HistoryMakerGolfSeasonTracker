@@ -8,7 +8,9 @@ const windowsOS = {
   },
 
   nsis: {
-    differentialPackage: true
+    differentialPackage: true,
+    oneClick: false,
+    allowToChangeInstallationDirectory: true
   }
 }
 
@@ -42,7 +44,7 @@ const macOS = {
 }
 
 module.exports = {
-  asar: false,
+  asar: true,
   productName: 'History Maker Golf Season Tracker',
   appId: 'hmg',
   artifactName: 'History Maker Golf Season Tracker-${version}.${ext}',
