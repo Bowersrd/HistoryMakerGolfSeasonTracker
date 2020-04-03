@@ -10,6 +10,9 @@
           </div>
         </nuxt-link>
       </div>
+      <nuxt-link to="/settings">
+        <v-icon id="settings-icon" size="40px">fas fa-cog</v-icon>
+      </nuxt-link>
     </div>
   </div>
 </template>
@@ -87,6 +90,14 @@
     font-size: 1.4rem;
     font-weight: 600;
   }
+}
+
+#settings-icon {
+  color: $blue;
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  cursor: pointer;
 }
 
 </style>

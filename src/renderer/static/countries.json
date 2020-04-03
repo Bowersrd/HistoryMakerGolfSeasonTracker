@@ -748,6 +748,10 @@
       "code": "SAU"
     },
     {
+      "country": "Scotland",
+      "code": "SCO"
+    },
+    {
       "country": "Senegal",
       "code": "SEN"
     },
@@ -918,6 +922,10 @@
     {
       "country": "Virgin Islands (U.S.)",
       "code": "VIR"
+    },
+    {
+      "country": "Wales",
+      "code": "WLS"
     },
     {
       "country": "Wallis and Futuna",
