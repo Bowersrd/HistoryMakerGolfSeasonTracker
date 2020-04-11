@@ -13,7 +13,7 @@
       <nuxt-link to="/settings">
         <v-icon id="settings-icon" size="40px">fas fa-cog</v-icon>
       </nuxt-link>
-      <p id="version">v1.0.1</p>
+      <p id="version">v1.0.2</p>
     </div>
   </div>
 </template>
