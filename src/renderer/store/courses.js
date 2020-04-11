@@ -13,6 +13,12 @@ const getDefaultState = () => {
       confirm('Are you sure you want to reset all courses to default (This cannot be undone!)?') && Object.assign(state, getDefaultState()) && window.location.reload()
     },
     ADD_COURSE: (state, course) => {
+      const usedId = state.courses.map(course => course.courseId)
+      if (usedId.includes(state.courses.length)) {
+        course.courseId = state.courses.length + 1
+      } else {
+        course.courseId = state.courses.length
+      }
       state.courses.push(course)
     },
     EDIT_COURSE: (state, { course, edited }) => {

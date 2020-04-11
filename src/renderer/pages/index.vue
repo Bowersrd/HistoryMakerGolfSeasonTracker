@@ -13,6 +13,7 @@
       <nuxt-link to="/settings">
         <v-icon id="settings-icon" size="40px">fas fa-cog</v-icon>
       </nuxt-link>
+      <p id="version">v1.0.1</p>
     </div>
   </div>
 </template>
@@ -98,6 +99,16 @@
   bottom: 15px;
   right: 15px;
   cursor: pointer;
+}
+
+#version {
+  color: $red;
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  user-select: none;
 }
 
 </style>
