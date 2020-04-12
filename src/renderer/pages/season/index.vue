@@ -2,19 +2,31 @@
   <div id="wrapper">
     <div id="main-menu">
       <div id="menu-buttons">
-        <nuxt-link to="/season/setup" class="menu-item" @click.native="newSeason">
+        <nuxt-link
+          to="/season/setup"
+          class="menu-item"
+          @click.native="newSeason"
+        >
           <v-icon dark size="100px">fas fa-calendar-alt</v-icon>
           <div class="menu-item-sub">
             <p>Start New Season</p>
           </div>
         </nuxt-link>
-        <nuxt-link to="/season/home" class="menu-item" :class="[ activeSeason ? '' : 'inactive' ]">
+        <nuxt-link
+          to="/season/home"
+          class="menu-item"
+          :class="[activeSeason ? '' : 'inactive']"
+        >
           <v-icon dark size="100px">fas fa-angle-double-right</v-icon>
           <div class="menu-item-sub">
             <p>Continue Season</p>
           </div>
         </nuxt-link>
-        <nuxt-link to="/season/home" class="menu-item" @click.native="importSeason">
+        <nuxt-link
+          to="/season/home"
+          class="menu-item"
+          @click.native="importSeason"
+        >
           <v-icon dark size="100px">fas fa-file-import</v-icon>
           <div class="menu-item-sub">
             <p>Import Season</p>
@@ -29,41 +41,42 @@
 </template>
 
 <script>
-  export default {
-    methods: {
-      newSeason () {
-        this.$store.dispatch('season/resetSeason')
-      },
-      importSeason () {
-        const {dialog} = require('electron').remote;
-        const fs = require('fs');
-        let file = dialog.showOpenDialog({
-        properties: ['openFile']});
-        if (file !== undefined) {
-          const season = JSON.parse(fs.readFileSync(file[0], 'utf8'));
-          if (season !== undefined) {
-            this.$store.dispatch('season/importSeason', season)
-            this.$store.dispatch('game/resetGame')
-          }
+export default {
+  methods: {
+    newSeason() {
+      this.$store.dispatch("season/resetSeason");
+    },
+    importSeason() {
+      const { dialog } = require("electron").remote;
+      const fs = require("fs");
+      let file = dialog.showOpenDialog({
+        properties: ["openFile"]
+      });
+      if (file !== undefined) {
+        const season = JSON.parse(fs.readFileSync(file[0], "utf8"));
+        if (season !== undefined) {
+          this.$store.dispatch("season/importSeason", season);
+          this.$store.dispatch("game/resetGame");
         }
       }
-    },
-    computed: {
-      activeSeason () {
-        return this.$store.state.season.activeSeason
-      }
+    }
+  },
+  computed: {
+    activeSeason() {
+      return this.$store.state.season.activeSeason;
     }
   }
+};
 </script>
 
 <style lang="scss">
-@import '~assets/sass/main.scss';
+@import "~assets/sass/main.scss";
 
 #wrapper {
   @include flex-center;
   width: 100%;
   height: 100vh;
-  background: url('~assets/img/background-main.jpg')
+  background: url("~assets/img/background-main.jpg");
 }
 
 #main-menu {
@@ -94,7 +107,7 @@
   transition: all 0.5s;
   &:hover {
     opacity: 1;
-    transform: scale(1.10);
+    transform: scale(1.1);
     z-index: 1;
   }
   i {
@@ -118,8 +131,7 @@
 }
 
 .inactive {
-  pointer-events:none;
+  pointer-events: none;
   filter: grayscale(100%);
 }
-
 </style>

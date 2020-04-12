@@ -3,10 +3,15 @@
     <div id="main-menu">
       <h1>History Maker Golf</h1>
       <div id="menu-buttons">
-        <nuxt-link :to="card.route" class="menu-item" v-for="card in cards" :key="card.id">
+        <nuxt-link
+          :to="card.route"
+          class="menu-item"
+          v-for="card in cards"
+          :key="card.id"
+        >
           <v-icon dark size="100px">fas fa-{{ card.icon }}</v-icon>
           <div class="menu-item-sub">
-            <p> {{ card.text }} </p>
+            <p>{{ card.text }}</p>
           </div>
         </nuxt-link>
       </div>
@@ -19,27 +24,32 @@
 </template>
 
 <script>
-  export default {
-    data: function () {
-      return {
-        cards: [
-          {id: 0, text: 'Play Season', icon: 'trophy', route: '/season'},
-          {id: 1, text: 'Golfer Manager', icon: 'users', route: '/golfers'},
-          {id: 2, text: 'Course Manager', icon: 'globe-americas', route: '/courses'}
-        ]
-      }
-    }
+export default {
+  data: function() {
+    return {
+      cards: [
+        { id: 0, text: "Play Season", icon: "trophy", route: "/season" },
+        { id: 1, text: "Golfer Manager", icon: "users", route: "/golfers" },
+        {
+          id: 2,
+          text: "Course Manager",
+          icon: "globe-americas",
+          route: "/courses"
+        }
+      ]
+    };
   }
+};
 </script>
 
 <style lang="scss">
-@import '~assets/sass/main.scss';
+@import "~assets/sass/main.scss";
 
 #wrapper {
   @include flex-center;
   width: 100%;
   height: 100vh;
-  background: url('~assets/img/background-main.jpg')
+  background: url("~assets/img/background-main.jpg");
 }
 
 #main-menu {
@@ -70,7 +80,7 @@
   transition: all 0.5s;
   &:hover {
     opacity: 1;
-    transform: scale(1.10);
+    transform: scale(1.1);
     z-index: 1;
   }
   i {
@@ -110,5 +120,4 @@
   font-weight: bold;
   user-select: none;
 }
-
 </style>

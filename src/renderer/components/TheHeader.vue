@@ -14,18 +14,17 @@
 export default {
   methods: {
     close: () => {
-      window.close()
+      window.close();
     },
     minimize: () => {
-      const { remote } = require('electron')
-      remote.BrowserWindow.getFocusedWindow().minimize()
+      const { remote } = require("electron");
+      remote.BrowserWindow.getFocusedWindow().minimize();
     }
   }
-}
+};
 </script>
 
 <style scoped>
-
 .titlebar {
   -webkit-user-select: none;
   -webkit-app-region: drag;
@@ -34,5 +33,4 @@ export default {
 .drag {
   -webkit-app-region: no-drag;
 }
-
 </style>

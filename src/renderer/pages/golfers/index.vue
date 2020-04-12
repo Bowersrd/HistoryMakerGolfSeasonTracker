@@ -10,21 +10,37 @@
       dense
       class="elevation-1"
     >
-    <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title class="title">Roster</v-toolbar-title>
-          <v-divider
-            class="mx-4"
-            inset
-            vertical
-          ></v-divider>
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-toolbar-title class="title">Roster</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
-              <v-btn color="#CC0001" dark class="mb-2 ml-2" v-on="on">Add Golfer</v-btn>
-              <v-btn color="#083666" dark class="mb-2 ml-2" @click="importRoster">Import Roster</v-btn>
-              <v-btn color="#CC0001" dark class="mb-2 ml-2" @click="exportRoster">Export Roster</v-btn>
-              <v-btn color="#083666" dark class="mb-2" @click.native="resetGolfers">Reset Golfers</v-btn>
+              <v-btn color="#CC0001" dark class="mb-2 ml-2" v-on="on"
+                >Add Golfer</v-btn
+              >
+              <v-btn
+                color="#083666"
+                dark
+                class="mb-2 ml-2"
+                @click="importRoster"
+                >Import Roster</v-btn
+              >
+              <v-btn
+                color="#CC0001"
+                dark
+                class="mb-2 ml-2"
+                @click="exportRoster"
+                >Export Roster</v-btn
+              >
+              <v-btn
+                color="#083666"
+                dark
+                class="mb-2"
+                @click.native="resetGolfers"
+                >Reset Golfers</v-btn
+              >
             </template>
             <v-card>
               <v-card-title>
@@ -35,34 +51,55 @@
                 <v-container>
                   <v-row>
                     <v-col cols="6">
-                      <v-text-field v-model="editedItem.first" label="First"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.first"
+                        label="First"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="6">
-                      <v-text-field v-model="editedItem.last" label="Last"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.last"
+                        label="Last"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12">
                       <v-autocomplete
-                      :items="$store.state.golfers.countries"
-                      item-text="country"
-                      item-value="code"
-                      label="Country"
-                      v-model="editedItem.country"
+                        :items="$store.state.golfers.countries"
+                        item-text="country"
+                        item-value="code"
+                        label="Country"
+                        v-model="editedItem.country"
                       ></v-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.points" label="FedEx Points"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.points"
+                        label="FedEx Points"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.wins" label="Wins"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.wins"
+                        label="Wins"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.top" label="Top 10"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.top"
+                        label="Top 10"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.cuts" label="Cuts"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.cuts"
+                        label="Cuts"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.grade" label="Grade"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.grade"
+                        label="Grade"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-checkbox
@@ -75,7 +112,9 @@
               </v-card-text>
 
               <v-card-actions>
-                <v-btn color="blue darken-1" text @click="importGolfer">Import</v-btn>
+                <v-btn color="blue darken-1" text @click="importGolfer"
+                  >Import</v-btn
+                >
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
                 <v-btn color="blue darken-1" text @click="save">Save</v-btn>
@@ -85,35 +124,30 @@
         </v-toolbar>
       </template>
       <template v-slot:item.country="{ item }">
-        <img class="mt-2" width="50%" height="100%" :src="require(`@/assets/img/flags/${item.country}.png`)" alt="Country Flag" />
+        <img
+          class="mt-2"
+          width="50%"
+          height="100%"
+          :src="require(`@/assets/img/flags/${item.country}.png`)"
+          alt="Country Flag"
+        />
       </template>
-      <template v-slot:item.money="{ item }">
-        $ {{ item.money }}
-      </template>
+      <template v-slot:item.money="{ item }"> $ {{ item.money }} </template>
       <template v-slot:item.action="{ item }">
-        <v-icon
-          small
-          class="mr-2"
-          @click="editItem(item)"
-        >
+        <v-icon small class="mr-2" @click="editItem(item)">
           fas fa-edit
         </v-icon>
-        <v-icon
-          small
-          class="mr-2"
-          @click="deleteItem(item)"
-        >
+        <v-icon small class="mr-2" @click="deleteItem(item)">
           fas fa-trash-alt
         </v-icon>
-        <v-icon
-          small
-          @click="exportGolfer(item)"
-        >
+        <v-icon small @click="exportGolfer(item)">
           fas fa-file-export
         </v-icon>
       </template>
       <template v-slot:no-data>
-        <h3 class="font-weight-bold my-3">You have no golfers in the database!</h3>
+        <h3 class="font-weight-bold my-3">
+          You have no golfers in the database!
+        </h3>
       </template>
     </v-data-table>
     <div class="d-flex">
@@ -121,207 +155,206 @@
         <v-icon>fas fa-long-arrow-alt-left</v-icon>
       </v-btn>
     </div>
-    <v-snackbar
-      color="#083666"
-      v-model="snackbar"
-      :timeout="3000"
-    >
+    <v-snackbar color="#083666" v-model="snackbar" :timeout="3000">
       {{ snackText }}
-      <v-btn
-        dark
-        text
-        @click="snackbar = false"
-      >
+      <v-btn dark text @click="snackbar = false">
         Close
       </v-btn>
     </v-snackbar>
-    </div>
-  </template>
+  </div>
+</template>
 
 <script>
-  export default {
-    data: () => ({
-      dialog: false,
-      snackbar: false,
-      snackText: '',
-      headers: [
-        { text: 'First', value: 'first' },
-        { text: 'Last', value: 'last' },
-        { text: 'Country', value: 'country' },
-        { text: 'FedEx Pts', value: 'points' },
-        { text: 'Events', value: 'events.length' },
-        { text: 'Wins', value: 'wins' },
-        { text: 'Top 10', value: 'top' },
-        { text: 'Cuts', value: 'cuts' },
-        { text: 'Earnings', value: 'money' },
-        { text: 'Actions', value: 'action' }
-      ],
-      players: [],
-      editedIndex: -1,
-      editedItem: {
-        id: 0,
-        first: '',
-        last: '',
-        country: '',
-        points: 0,
-        events: [],
-        wins: 0,
-        top: 0,
-        cuts: 0,
-        money: 0,
-        injured: false,
-        grade: ''
-      },
-      defaultItem: {
-        id: 0,
-        first: '',
-        last: '',
-        country: '',
-        points: 0,
-        events: [],
-        wins: 0,
-        top: 0,
-        cuts: 0,
-        money: 0,
-        injured: false,
-        grade: ''
-      },
-    }),
+export default {
+  data: () => ({
+    dialog: false,
+    snackbar: false,
+    snackText: "",
+    headers: [
+      { text: "First", value: "first" },
+      { text: "Last", value: "last" },
+      { text: "Country", value: "country" },
+      { text: "FedEx Pts", value: "points" },
+      { text: "Events", value: "events.length" },
+      { text: "Wins", value: "wins" },
+      { text: "Top 10", value: "top" },
+      { text: "Cuts", value: "cuts" },
+      { text: "Earnings", value: "money" },
+      { text: "Actions", value: "action" }
+    ],
+    players: [],
+    editedIndex: -1,
+    editedItem: {
+      id: 0,
+      first: "",
+      last: "",
+      country: "",
+      points: 0,
+      events: [],
+      wins: 0,
+      top: 0,
+      cuts: 0,
+      money: 0,
+      injured: false,
+      grade: ""
+    },
+    defaultItem: {
+      id: 0,
+      first: "",
+      last: "",
+      country: "",
+      points: 0,
+      events: [],
+      wins: 0,
+      top: 0,
+      cuts: 0,
+      money: 0,
+      injured: false,
+      grade: ""
+    }
+  }),
 
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Add Golfer' : 'Edit Golfer'
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? "Add Golfer" : "Edit Golfer";
+    }
+  },
+
+  watch: {
+    dialog(val) {
+      val || this.close();
+    }
+  },
+
+  created() {
+    this.initialize();
+  },
+
+  methods: {
+    initialize() {
+      this.players = this.$store.state.golfers.players;
+    },
+
+    editItem(item) {
+      this.editedIndex = this.players.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+
+    deleteItem(item) {
+      const id = item.id;
+      this.$store.dispatch("golfers/deleteGolfer", id);
+    },
+
+    close() {
+      this.dialog = false;
+      setTimeout(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      }, 300);
+    },
+
+    save() {
+      if (this.editedIndex > -1) {
+        const editItem = this.editedItem;
+        const editIndex = this.editedIndex;
+        this.$store.dispatch("golfers/editGolfer", {
+          golfer: editItem,
+          edited: editIndex
+        });
+      } else {
+        this.$store.dispatch("golfers/addGolfer", this.editedItem);
+      }
+      this.close();
+    },
+
+    resetGolfers() {
+      this.$store.dispatch("golfers/resetGolfers");
+    },
+
+    importRoster() {
+      const { dialog } = require("electron").remote;
+      const fs = require("fs");
+      let file = dialog.showOpenDialog({
+        properties: ["openFile"]
+      });
+      if (file !== undefined) {
+        const roster = JSON.parse(fs.readFileSync(file[0], "utf8"));
+        if (roster !== undefined) {
+          this.$store.dispatch("golfers/addRoster", roster);
+          this.snackbar = true;
+          this.snackText = "Roster successfully imported!";
+        }
       }
     },
 
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
+    importGolfer() {
+      const { dialog } = require("electron").remote;
+      const fs = require("fs");
+      let file = dialog.showOpenDialog({
+        properties: ["openFile"]
+      });
+      if (file !== undefined) {
+        const golfer = JSON.parse(fs.readFileSync(file[0], "utf8"));
+        if (golfer.id !== undefined) {
+          this.$store.dispatch("golfers/addGolfer", golfer);
+          this.dialog = false;
+          this.snackbar = true;
+          this.snackText = `${golfer.first} ${golfer.last} successfully imported!`;
+        }
+      }
     },
 
-    created () {
-      this.initialize()
-    },
-
-    methods: {
-      initialize () {
-        this.players = this.$store.state.golfers.players
-      },
-
-      editItem (item) {
-        this.editedIndex = this.players.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-
-      deleteItem (item) {
-        const id = item.id
-        this.$store.dispatch('golfers/deleteGolfer', id)
-      },
-
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          const editItem = this.editedItem
-          const editIndex = this.editedIndex
-          this.$store.dispatch('golfers/editGolfer', { golfer: editItem, edited: editIndex })
-        } else {
-          this.$store.dispatch('golfers/addGolfer', this.editedItem)
-        }
-        this.close()
-      },
-
-      resetGolfers () {
-        this.$store.dispatch('golfers/resetGolfers')
-      },
-
-      importRoster () {
-        const {dialog} = require('electron').remote;
-        const fs = require('fs');
-        let file = dialog.showOpenDialog({
-        properties: ['openFile']});
-        if (file !== undefined) {
-          const roster = JSON.parse(fs.readFileSync(file[0], 'utf8'));
-          if (roster !== undefined) {
-            this.$store.dispatch('golfers/addRoster', roster)
-            this.snackbar = true
-            this.snackText = 'Roster successfully imported!'
-          }
-        }
-      },
-
-      importGolfer () {
-        const {dialog} = require('electron').remote;
-        const fs = require('fs');
-        let file = dialog.showOpenDialog({
-        properties: ['openFile']});
-        if (file !== undefined) {
-          const golfer = JSON.parse(fs.readFileSync(file[0], 'utf8'));
-          if (golfer.id !== undefined) {
-            this.$store.dispatch('golfers/addGolfer', golfer)
-            this.dialog = false
-            this.snackbar = true
-            this.snackText = `${golfer.first} ${golfer.last} successfully imported!`
-          }
-        }
-      },
-
-      exportGolfer (item) {
-        const {dialog} = require('electron').remote;
-        const exportedGolfer = JSON.stringify(item)
-        let path = dialog.showOpenDialog({
-        properties: ['openDirectory']});
-        let name = `${item.first} ${item.last}`
-        var fs = require('fs');
-        if (path !== undefined) {
+    exportGolfer(item) {
+      const { dialog } = require("electron").remote;
+      const exportedGolfer = JSON.stringify(item);
+      let path = dialog.showOpenDialog({
+        properties: ["openDirectory"]
+      });
+      let name = `${item.first} ${item.last}`;
+      var fs = require("fs");
+      if (path !== undefined) {
         fs.writeFile(`${path}/${name}.txt`, exportedGolfer, function(err) {
           if (err) {
             console.log(err);
           }
-        })
-        this.snackbar = true
-        this.snackText = `${item.first} ${item.last} successfully exported!`
-        }
-      },
+        });
+        this.snackbar = true;
+        this.snackText = `${item.first} ${item.last} successfully exported!`;
+      }
+    },
 
-      exportRoster () {
-        const {dialog} = require('electron').remote;
-        const exportedRoster = JSON.stringify(this.$store.state.golfers.players)
-        let path = dialog.showOpenDialog({
-        properties: ['openDirectory']});
-        let name = `{YEAR}_PGA_TOUR`
-        var fs = require('fs');
-        if (path !== undefined) {
+    exportRoster() {
+      const { dialog } = require("electron").remote;
+      const exportedRoster = JSON.stringify(this.$store.state.golfers.players);
+      let path = dialog.showOpenDialog({
+        properties: ["openDirectory"]
+      });
+      let name = `{YEAR}_PGA_TOUR`;
+      var fs = require("fs");
+      if (path !== undefined) {
         fs.writeFile(`${path}/${name}.json`, exportedRoster, function(err) {
           if (err) {
             console.log(err);
           }
-        })
-        this.snackbar = true
-        this.snackText = `Roster successfully exported!`
-        }
+        });
+        this.snackbar = true;
+        this.snackText = `Roster successfully exported!`;
       }
     }
   }
+};
 </script>
 
 <style lang="scss">
-@import '~assets/sass/main.scss';
+@import "~assets/sass/main.scss";
 
 #content-wrapper {
   @include flex-center;
   width: 100%;
   height: 100vh;
   flex-direction: column;
-  background: url('~assets/img/background-play.jpg');
+  background: url("~assets/img/background-play.jpg");
   h1 {
     color: $blue;
     text-transform: uppercase;
@@ -371,7 +404,7 @@
   transition: all 0.5s;
   &:hover {
     opacity: 1;
-    transform: scale(1.10);
+    transform: scale(1.1);
     z-index: 1;
   }
   i {
@@ -397,5 +430,4 @@
 .year-select {
   max-width: 12%;
 }
-
 </style>

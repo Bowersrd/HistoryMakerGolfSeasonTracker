@@ -1,30 +1,30 @@
 [
-    {
-        "courseId": 0,
-        "name": "Augusta National GC",
-        "par": 72,
-        "yards": 7768,
-        "holes": [
-        { "no": 1, "par": 4, "yds": 445 },
-        { "no": 2, "par": 5, "yds": 575 },
-        { "no": 3, "par": 4, "yds": 350 },
-        { "no": 4, "par": 3, "yds": 240 },
-        { "no": 5, "par": 4, "yds": 495 },
-        { "no": 6, "par": 3, "yds": 180 },
-        { "no": 7, "par": 4, "yds": 450 },
-        { "no": 8, "par": 5, "yds": 570 },
-        { "no": 9, "par": 4, "yds": 460 },
-        { "no": 10, "par": 4, "yds": 495 },
-        { "no": 11, "par": 4, "yds": 505 },
-        { "no": 12, "par": 3, "yds": 155 },
-        { "no": 13, "par": 5, "yds": 510 },
-        { "no": 14, "par": 4, "yds": 440 },
-        { "no": 15, "par": 5, "yds": 530 },
-        { "no": 16, "par": 3, "yds": 170 },
-        { "no": 17, "par": 4, "yds": 440 },
-        { "no": 18, "par": 4, "yds": 465 }
-        ],
-        "city": "Augusta",
-        "state": "Georgia"
-    }
-]  
+  {
+    "courseId": 0,
+    "name": "Augusta National GC",
+    "par": 72,
+    "yards": 7768,
+    "holes": [
+      { "no": 1, "par": 4, "yds": 445 },
+      { "no": 2, "par": 5, "yds": 575 },
+      { "no": 3, "par": 4, "yds": 350 },
+      { "no": 4, "par": 3, "yds": 240 },
+      { "no": 5, "par": 4, "yds": 495 },
+      { "no": 6, "par": 3, "yds": 180 },
+      { "no": 7, "par": 4, "yds": 450 },
+      { "no": 8, "par": 5, "yds": 570 },
+      { "no": 9, "par": 4, "yds": 460 },
+      { "no": 10, "par": 4, "yds": 495 },
+      { "no": 11, "par": 4, "yds": 505 },
+      { "no": 12, "par": 3, "yds": 155 },
+      { "no": 13, "par": 5, "yds": 510 },
+      { "no": 14, "par": 4, "yds": 440 },
+      { "no": 15, "par": 5, "yds": 530 },
+      { "no": 16, "par": 3, "yds": 170 },
+      { "no": 17, "par": 4, "yds": 440 },
+      { "no": 18, "par": 4, "yds": 465 }
+    ],
+    "city": "Augusta",
+    "state": "Georgia"
+  }
+]
